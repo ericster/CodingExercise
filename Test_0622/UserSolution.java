@@ -75,6 +75,7 @@ public class UserSolution {
         int[] arr = new int[N*N+K];
         int _N = N*N+K;
         int _K = N*N;
+        int cnt=0;
         //_N = 4;
         //_K = 3;
         for (int i=0;i<_N;i++){
@@ -83,18 +84,19 @@ public class UserSolution {
             int[] ans = new int[]{ 1, 8, 3, 4, 2, 5, 0, 9, 6};
             //if (isRightPieces(arr)){
             if (isRightPieces(ans)){
-                int center_idx = arr[(N-1)/2];
+                int center_idx = ans[(N*N-1)/2];
                 int[] center = pieces[center_idx];
+                for (int i=0;i<4*M;i++){
+                    if (center[i] == 1){
+                        cnt++;
+                    }
+                }
                 System.out.println("center " + center_idx);
                 System.out.println("center arr" + Arrays.toString(center));
             }
         //genKPermutation(arr,_N, _K); 
 
-
-        for (int i=0;i<N*N;i++){
-
-        }
-        return 0;
+        return cnt;
     }
 
 
@@ -121,7 +123,7 @@ public class UserSolution {
          neighbor:     [-1,1,-m,m]
          */
         System.out.println("peieceArr " + Arrays.toString(pieceArr));
-        int[] neighbor = new int[]{-1*M,1,M, -1};
+        //int[] neighbor = new int[]{-1*M,1,M, -1};
 
         /* between sides
         (N-1)*N
@@ -136,11 +138,11 @@ public class UserSolution {
         for (int i=0;i<N;i++){
             for (int j=0;j<N-1;j++){
                 // 0~M-1, M~2M-1, 2*M~3M-1, 3M~4M-1 
-                left = pieces[pieceArr[j+i]]; // left[1]  M~2M-1, 
-                right = pieces[pieceArr[j+1+i]]; // right[3] 3M~4M-1
-                System.out.println("left " + pieceArr[j+i]); // left[1]  M~2M-1, 
+                left = pieces[pieceArr[j+i*N]]; // left[1]  M~2M-1, 
+                right = pieces[pieceArr[j+1+i*N]]; // right[3] 3M~4M-1
+                System.out.println("left " + pieceArr[j+i*N]); // left[1]  M~2M-1, 
                 System.out.println("left arr" + Arrays.toString(left));
-                System.out.println("right " + pieceArr[j+1+i]); // left[1]  M~2M-1, 
+                System.out.println("right " + pieceArr[j+1+i*N]); // left[1]  M~2M-1, 
                 System.out.println("right arr" + Arrays.toString(right));
                 for (int k=0;k<M;k++){
                     left_1[k]=left[k+M];
@@ -150,7 +152,7 @@ public class UserSolution {
                 System.out.println("right_3 " + Arrays.toString(right_3));
 
                 for (int k=0;k<M;k++){
-                    if (left_1[k] != right_3[k]){
+                    if (left_1[k] + right_3[M-k-1] != 0){
                         return false;
                     }
 
@@ -164,23 +166,30 @@ public class UserSolution {
         0(0,3), 1(1,4), 2(2,5)
         3(3,6), 4(4,7), 5(5,8)
         pieces = new int[n*n+k][4*m];
+        peieceArr [1, 8, 3, 
+                   4, 2, 5, 
+                   0, 9, 6]
         */
         int[] up, dn;
-        int[] up_0 = new int[M];
-        int[] dn_2 = new int[M];
+        int[] up_2 = new int[M];
+        int[] dn_0 = new int[M];
         for (int i=0;i<N-1;i++){
             for (int j=0;j<N;j++){
-                up = pieces[pieceArr[j]]; // up[0]  M~2M-1, 
-                dn = pieces[pieceArr[j+i*M]]; // dn[2] 3M~4M-1
-                System.out.println("up " + pieceArr[j]); // left[1]  M~2M-1, 
-                System.out.println("dn " + pieceArr[j+i*M]); // left[1]  M~2M-1, 
+                up = pieces[pieceArr[j + i*N]]; // up[0]  M~2M-1, 
+                dn = pieces[pieceArr[j + (i+1)*N]]; // dn[2] 3M~4M-1
+                System.out.println("up " + pieceArr[j + i*N]); // left[1]  M~2M-1, 
+                System.out.println("up arr" + Arrays.toString(up));
+                System.out.println("dn " + pieceArr[j + (i+1)*N]); // left[1]  M~2M-1, 
+                System.out.println("dn arr" + Arrays.toString(dn));
                 for (int k=0;k<M;k++){
-                    up_0[k]= up[k];
-                    dn_2[k]= dn[k+2*M];
+                    up_2[k]= up[k+2*M];
+                    dn_0[k]= dn[k];
                 }
+                System.out.println("up_2 " + Arrays.toString(up_2));
+                System.out.println("dn_0 " + Arrays.toString(dn_0));
 
                 for (int k=0;k<M;k++){
-                    if (up_0[k] != dn_2[k]){
+                    if (up_2[k] + dn_0[M-k-1] != 0){
                         return false;
                     }
 
