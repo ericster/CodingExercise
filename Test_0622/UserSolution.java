@@ -1,3 +1,5 @@
+//import UserSolution._LinkedList;
+//import UserSolution._LinkedList.ListNode;
 import java.util.Arrays;
 
 public class UserSolution {
@@ -7,6 +9,44 @@ public class UserSolution {
     int [][] pieces;
     int [] index; 
     int [] res;
+    _LinkedList [] graph ;
+    class _LinkedList {
+        ListNode head;
+        class ListNode {
+            int data;
+            ListNode next;
+        }
+        public _LinkedList(){
+            head = new ListNode();
+        }
+
+        public void add(int data){
+            ListNode newNode = new ListNode();
+            newNode.data = data;
+            newNode.next = head;
+            head = newNode;
+        }
+
+        public boolean search(int data){
+            ListNode tmp = head;
+            while (tmp !=null){
+                if (tmp.data == data) return true;
+                tmp = tmp.next;
+            }
+            return false;
+        }
+
+        public void display(){
+            ListNode tmp = head;
+            while (tmp !=null) {
+                System.out.print(" : " + tmp.data );
+                tmp = tmp.next;
+            }
+
+        }
+
+
+    }
 
     public void init(int n, int m, int k)
     {
@@ -14,9 +54,16 @@ public class UserSolution {
         N = n;
         M = m;
         K = k;
+        int nodeNo = n*n+k;
         pieces = new int[n*n+k][4*m];
         index = new int[n*n];
         res = new int[]{-1};
+
+        graph = new _LinkedList[nodeNo];
+        for (int i=0;i<nodeNo;i++){
+            graph[i] = new _LinkedList();
+        }
+
 
 /*
     0: 1 2 3 4
@@ -42,8 +89,44 @@ public class UserSolution {
             pieces[piece_no][i] = piece[i];
         }
         System.out.println("no " + piece_no + Arrays.toString(pieces[piece_no]));
+        for (int i=0;i<piece_no;i++){
+            int [] prev = pieces[i];
+            boolean a = true,b = true,c = true,d = true;
+                // 0...M-1 :     M ... 2*M-1 : 2*M .. 3*M-1 : 3*M .. 4*M-1
+                // 2*M .. 3*M-1  3*M .. 4*M-1  0..M-1         M.. 2*M-1
+            for (int j=0;j<M;j++){
+                if (prev[j] + piece[3*M-1 - j] != 0 ) a = false;
+            }
+            
+            for (int j=0;j<M;j++){
+                if (prev[j+M] + piece[4*M -1 - j] != 0) b = false;
+            }
+            for (int j=0;j<M;j++){
+                if (prev[j + 2*M] + piece[M - j] != 0) c = false;
+            }
+
+            for (int j=0;j<M;j++){
+                if (prev[j + 3*M] + piece[2*M-1 - j] != 0) d = false;
+            }
+
+            if ( a || b || c || d){
+                graph[i].add(piece_no);
+                graph[piece_no].add(i);
+            }
+        }
         piece_no++;
-        
+    }
+
+    void displayGraph(_LinkedList[] graph)
+    {       
+        int nodeNum = N*N +K;
+        for(int v = 0; v < nodeNum; v++)
+        {
+            System.out.println("Adjacency list of vertex "+ v);
+            _LinkedList tmp = graph[v];
+            tmp.display();
+            System.out.println("\n");
+        }
     }
 
     public int findCenterPiece()
@@ -71,6 +154,8 @@ public class UserSolution {
 
 
         // permutation dfs
+        System.out.println("graph display");
+        displayGraph(graph);
 
         int[] arr = new int[N*N+K];
         int _N = N*N+K;
@@ -81,8 +166,22 @@ public class UserSolution {
         for (int i=0;i<_N;i++){
             arr[i] = i;
         }
+        /*
             int[] ans = new int[]{ 1, 8, 3, 4, 2, 5, 0, 9, 6};
-            //if (isRightPieces(arr)){
+       1 8 3 
+       4 2 5
+       0 9 6
+            0
+            1 
+            2 
+            3 
+            4, 0, 1, 2
+            5, 2, 3
+            6, 5
+            7, 
+            8, 1, 2, 3
+            9 0, 2, 6
+
             if (isRightPieces(ans)){
                 int center_idx = ans[(N*N-1)/2];
                 int[] center = pieces[center_idx];
@@ -94,9 +193,10 @@ public class UserSolution {
                 System.out.println("center " + center_idx);
                 System.out.println("center arr" + Arrays.toString(center));
             }
+        */
         //genKPermutation(arr,_N, _K); 
 
-        return cnt;
+        return res[0];
     }
 
 
@@ -235,20 +335,23 @@ public class UserSolution {
         if (l == r) {
             System.out.println("peieceArr " + Arrays.toString(arr));
             
-            int[] ans = new int[]{ 1, 8, 3, 4, 2, 5, 0, 9, 6};
-            //if (isRightPieces(arr)){
-            if (isRightPieces(ans)){
-                int center_idx = arr[(N-1)/2];
+            //int[] ans = new int[]{ 1, 8, 3, 4, 2, 5, 0, 9, 6};
+            int cnt = 0;
+            if (isRightPieces(arr)){
+                int center_idx = arr[(N*N-1)/2];
                 int[] center = pieces[center_idx];
+                for (int i=0;i<4*M;i++){
+                    if (center[i] == 1){
+                        cnt++;
+                    }
+                }
                 System.out.println("center " + center_idx);
                 System.out.println("center arr" + Arrays.toString(center));
+                res[0] = cnt;
 
-                //TODO: to calculate the number of '1'
-                // ?? : return how?
-                return ;
             }
             //System.out.println(Arrays.toString(arr));
-            //return;
+            return;
         }
         else
         {
