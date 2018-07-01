@@ -17,14 +17,20 @@ public class UserSolution {
             ListNode next;
         }
         public _LinkedList(){
-            head = new ListNode();
+            //head = new ListNode();
+            head = null;
         }
 
         public void add(int data){
             ListNode newNode = new ListNode();
             newNode.data = data;
-            newNode.next = head;
-            head = newNode;
+            if (head == null){
+                head = newNode;
+            }
+            else {
+                newNode.next = head;
+                head = newNode;
+            }
         }
 
         public boolean search(int data){
@@ -94,6 +100,12 @@ public class UserSolution {
             boolean a = true,b = true,c = true,d = true;
                 // 0...M-1 :     M ... 2*M-1 : 2*M .. 3*M-1 : 3*M .. 4*M-1
                 // 2*M .. 3*M-1  3*M .. 4*M-1  0..M-1         M.. 2*M-1
+                /*
+                    1 8 3 
+                    4 2 5
+                    0 9 6
+                
+                */
             for (int j=0;j<M;j++){
                 if (prev[j] + piece[3*M-1 - j] != 0 ) a = false;
             }
@@ -102,7 +114,7 @@ public class UserSolution {
                 if (prev[j+M] + piece[4*M -1 - j] != 0) b = false;
             }
             for (int j=0;j<M;j++){
-                if (prev[j + 2*M] + piece[M - j] != 0) c = false;
+                if (prev[j + 2*M] + piece[M -1 - j] != 0) c = false;
             }
 
             for (int j=0;j<M;j++){
