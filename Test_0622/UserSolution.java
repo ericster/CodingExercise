@@ -10,6 +10,37 @@ public class UserSolution {
     int [] index; 
     int [] res;
     _LinkedList [] graph ;
+    GridNode[] puzzle;
+    class GridNode {
+        int lt;
+        int rt;
+        int up;
+        int dn;
+        public GridNode(){
+            lt=-1;
+            rt=-1;
+            up=-1;
+            dn=-1;
+        }
+
+        public boolean isCorner(){
+            boolean ul = (lt == -1 && rt >=0 && up == -1 && dn >=0) ? true : false;
+            boolean ur = (lt >= 0 && rt == -1 && up == -1 && dn >=0) ? true : false;
+            boolean dl = (lt == -1 && rt >=0 && up >= 0 && dn == -1) ? true : false;
+            boolean dr = (lt >= 0 && rt == -1 && up >= 0 && dn == -1) ? true : false;
+            boolean corner = ul || ur || dl || dr ; 
+            return corner;
+        }
+
+        
+        public void display(){
+            System.out.println("lt " + lt + " , rt " + rt + " , up " + up + " , dn " + dn );
+            if (isCorner()){
+                System.out.println(" -> corner node");
+            }
+        }
+    }
+
     class _LinkedList {
         ListNode head;
         class ListNode {
@@ -66,6 +97,10 @@ public class UserSolution {
         res = new int[]{-1};
 
         graph = new _LinkedList[nodeNo];
+        puzzle = new GridNode[nodeNo];
+        for (int i=0;i<nodeNo;i++){
+            puzzle[i] = new GridNode();
+        }
         for (int i=0;i<nodeNo;i++){
             graph[i] = new _LinkedList();
         }
@@ -97,7 +132,7 @@ public class UserSolution {
         System.out.println("no " + piece_no + Arrays.toString(pieces[piece_no]));
         for (int i=0;i<piece_no;i++){
             int [] prev = pieces[i];
-            boolean a = true,b = true,c = true,d = true;
+            boolean lt = true, rt = true, up = true, dn = true;
                 // 0...M-1 :     M ... 2*M-1 : 2*M .. 3*M-1 : 3*M .. 4*M-1
                 // 2*M .. 3*M-1  3*M .. 4*M-1  0..M-1         M.. 2*M-1
                 /*
@@ -107,26 +142,57 @@ public class UserSolution {
                 
                 */
             for (int j=0;j<M;j++){
-                if (prev[j] + piece[3*M-1 - j] != 0 ) a = false;
+                if (prev[j] + piece[3*M-1 - j] != 0 ) dn = false;
             }
             
             for (int j=0;j<M;j++){
-                if (prev[j+M] + piece[4*M -1 - j] != 0) b = false;
+                if (prev[j+M] + piece[4*M -1 - j] != 0) lt = false;
             }
             for (int j=0;j<M;j++){
-                if (prev[j + 2*M] + piece[M -1 - j] != 0) c = false;
+                if (prev[j + 2*M] + piece[M -1 - j] != 0) up  = false;
             }
 
             for (int j=0;j<M;j++){
-                if (prev[j + 3*M] + piece[2*M-1 - j] != 0) d = false;
+                if (prev[j + 3*M] + piece[2*M-1 - j] != 0) rt = false;
             }
 
-            if ( a || b || c || d){
+            if (lt){
+                puzzle[i].rt = piece_no;
+                puzzle[piece_no].lt = i;
+            }
+            if (rt){
+                puzzle[i].lt = piece_no;
+                puzzle[piece_no].rt = i;
+            }
+            if (up){
+                puzzle[i].dn = piece_no;
+                puzzle[piece_no].up = i;
+            }
+            if (dn){
+                puzzle[i].up = piece_no;
+                puzzle[piece_no].dn = i;
+            }
+            if ( lt  || rt || up || dn){
                 graph[i].add(piece_no);
                 graph[piece_no].add(i);
             }
+            /*
+            4 corners
+            uplt = up, lt
+            uprt = up, rt
+            dnlt = dn, lt
+            dnrt = dn, rt
+            */
         }
         piece_no++;
+    }
+
+    void displayPuzzle(GridNode[] puzzle) {
+        int nodeNum = N*N +K;
+        for(int v = 0; v < nodeNum; v++) {
+            System.out.println(" Puzzle node "+ v);
+            puzzle[v].display();;
+        }
     }
 
     void displayGraph(_LinkedList[] graph)
@@ -168,6 +234,8 @@ public class UserSolution {
         // permutation dfs
         System.out.println("graph display");
         displayGraph(graph);
+        System.out.println("*** Puzzle *** ");
+        displayPuzzle(puzzle);
 
         int[] arr = new int[N*N+K];
         int _N = N*N+K;
