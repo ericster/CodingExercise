@@ -51,7 +51,8 @@ class Solution {
 	
 	public static void main(String[] args) throws Exception {
 	
-		System.setIn(new java.io.FileInputStream("res/sample_input.1.txt"));
+		//System.setIn(new java.io.FileInputStream("res/sample_input.1.txt"));
+		System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		sc = new Scanner(System.in);
 
 		int TC = sc.nextInt();
