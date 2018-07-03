@@ -1,0 +1,43 @@
+/ : root
+* : all
+.. : parent
+\t : earliest in alphabetical order
+
+tree, queue, bfs(tree search), map(curr dir search), quicksort(?)
+
+Node {
+        String current;
+        Node[] children;  // array or linkedList ?
+        HashMap(String, Integer) ch_map;
+
+}
+
+mKeyword: len 12, lowercase
+
+void init(void)
+- root directory created
+
+void cmd_mkdir(String mKeyword)  :20000
+- same name -> no created
+
+int cmd_rm(String mKeyword)  : 10000
+- mKeyword: *, String* -> all children deleted
+
+void cmd_cd(String mKeyword) : 10000
+- no keyword -> no change
+- string\t -> dir earliest in alaphabeta *****!!!!***** <<<<<
+
+int cmd_find(String mKeyword) : 200
+- mKeyword: *, String*
+
+
+mstrcmp(char[] a, char[] b) : string compare
+
+mstrncmp(char[] a, char[] b, int len) :
+
+mstrlen(char[] a) : string length
+
+mstrcpy(char[] dest, char[] src)
+
+mstrncpy(char[] dest, char[] src, int len)
+
