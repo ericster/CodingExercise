@@ -1,0 +1,320 @@
+/*
+ * solution.cpp
+ *
+ *  Created on: Apr 6, 2018
+ *      Author: me.jung
+ *      Total Score = 100
+ *      runtime  4.789737 seconds to execute
+ */
+//#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <stdio.h>
+#include <cstddef>
+using namespace std;
+const int ALPHABET_SIZE = 26;
+bool DEBUG = false;
+
+// trie node
+struct TrieNode
+{
+	struct TrieNode *children[ALPHABET_SIZE];
+	bool isEndOfWord;
+	bool block = false;
+	int blockCnt = 0;
+	bool removed = false;
+};
+
+struct TrieNode *getNode(void)
+{
+	struct TrieNode *pNode =  new TrieNode;
+
+	pNode->isEndOfWord = false;
+
+	for (int i = 0; i < ALPHABET_SIZE; i++)
+		pNode->children[i] = NULL;
+
+	return pNode;
+}
+
+// function to check if current node is leaf node or not
+bool isLeafNode(struct TrieNode* root)
+{
+    return root->isEndOfWord!= false;
+}
+
+// function to display the content of Trie
+void printTrie(struct TrieNode* root, char str[], int level)
+{
+    // If node is leaf node, it indiicates end
+    // of string, so a null charcter is added
+    // and string is displayed
+    //if (isLeafNode(root))
+    if (root->isEndOfWord)
+    {
+        str[level] = '\0';
+		if (DEBUG)	cout << "print Trie of page added" << endl;
+        if (DEBUG) cout << str << endl;
+    }
+
+    //for (int i = 0; i < ALPHABET_SIZE; i++)
+    for (int i = 0; i < 26; i++)
+    {
+        // if NON NULL child is found
+        // add parent key to str and
+        // call the display function recursively
+        // for child node
+        if (root->children[i])
+        {
+            str[level] = i + 'a';
+			//cout << " print Trie of page added str : " << str << endl;
+            printTrie(root->children[i], str, level + 1);
+        }
+    }
+}
+
+
+void insert(struct TrieNode *root, char* key)
+{
+	struct TrieNode *pNode = root;
+	// null terminated array
+	int length = strlen(key);
+	if (DEBUG) cout << "str length is " << length << endl;
+
+	/*** BUG
+	 * character size should be determined
+	 * otherwise, caused runtime termination (-1)
+	 */
+	for (int i = 0; i < length; i++)
+	{
+		int index = key[i] - 'a';
+		if (!pNode->children[index])
+			pNode->children[index] = getNode();
+
+		pNode = pNode->children[index];
+	}
+
+	if (DEBUG) cout << "inserted " << key << endl;
+
+	pNode->isEndOfWord = true;
+}
+
+bool searchTrie(struct TrieNode *root, char* key)
+{
+	struct TrieNode *pNode = root;
+	int length = strlen(key);
+	if (DEBUG) cout << "str length is " << length << endl;
+
+	for (int i = 0; i < length; i++)
+	{
+		//cout << " key " << key << " i " << key[i] << endl;
+		int index = key[i] - 'a';
+		if (!pNode->children[index]){
+			if (DEBUG) cout << " failed " << endl;
+			return false;
+		}
+
+		pNode = pNode->children[index];
+	}
+
+	//return (pNode != NULL && pNode->isEndOfWord);
+	return (pNode->isEndOfWord);
+}
+
+void blockTrie(struct TrieNode *root, char* key)
+{
+	struct TrieNode *pNode = root;
+	int length = strlen(key);
+	for (int i = 0; i < length; i++)
+	{
+		int index = key[i] - 'a';
+		if (!pNode->children[index]){
+			return ;
+		}
+
+		pNode = pNode->children[index];
+	}
+
+	//return (pNode != NULL && pNode->isEndOfWord);
+	pNode->block = true;
+	root->blockCnt++;
+	if (root->blockCnt > 0){
+		root->block = true;
+	}
+}
+
+/*
+ * DEBUG: consider the case of having two or more block words
+ */
+void unblockTrie(struct TrieNode *root, char* key)
+{
+	struct TrieNode *pNode = root;
+	int length = strlen(key);
+	for (int i = 0; i < length; i++)
+	{
+		int index = key[i] - 'a';
+		if (!pNode->children[index]){
+			return ;
+		}
+
+		pNode = pNode->children[index];
+	}
+
+	//return (pNode != NULL && pNode->isEndOfWord);
+	pNode->block = false;
+	root->blockCnt--;
+	if (root->blockCnt == 0){
+		root->block = false;
+	}
+}
+
+int page_cnt;
+struct TrieNode* pages;
+
+void init(int n) {
+	int N = 6000;
+	pages = new TrieNode[N];
+	page_cnt = 0;
+
+}
+
+void addPage_0(int mId, int m, char word[][11]) {
+
+	char* temp;
+	for (int i=0;i<m;i++){
+		//cout << "current word " << word[i] << endl;
+		//insert(&pNode, word[i]);
+		insert(&pages[mId], word[i]);
+	}
+}
+void addPage(int mId, int m, char word[][11]) {
+
+	page_cnt++;
+	// copy?
+	//TrieNode pNode = pages[mId];
+	if (DEBUG) cout << "added page " << mId << endl;
+	if (DEBUG) cout << "page count " << page_cnt << endl;
+	char* temp;
+	for (int i=0;i<m;i++){
+		//cout << "current word " << word[i] << endl;
+		//insert(&pNode, word[i]);
+		insert(&pages[mId], word[i]);
+	}
+
+    int level = 0;
+    char str[11];
+	//printTrie(&pages[mId], str, 0);
+
+}
+
+void removePage(int mId) {
+	if (DEBUG) cout << "page removed " << mId << endl;
+	pages[mId].removed = true;
+
+}
+
+void blockWord(char word[]) {
+	if (DEBUG) cout << "page blocking " << endl;
+	for(int i=0;i<page_cnt;i++){
+		blockTrie(&pages[i], word);
+	}
+}
+
+/*
+ * BUG change page type to reference with addr operator
+ *
+ */
+void recoverWord(char word[]) {
+	if (DEBUG) cout << "page recovering " << endl;
+	for(int i=0;i<page_cnt;i++){
+		unblockTrie(&pages[i], word);
+		/*
+		if (searchTrie(&pages[i], word)){
+			cout << "page recovered " << i <<  " with word " << word << endl;
+			pages[i].block = false;
+		}
+		*/
+	}
+}
+
+
+/*
+1
+50 5 10 0 5
+2 3 3 1 1
+
+
+ */
+int search_0(char word[][11], int mode) {
+	int len=2;
+	for (int i=0;i<len;i++){
+		cout << "word in searching " << word[i] << endl;
+	}
+	return 0;
+}
+int search(char word[][11], int mode) {
+	/*
+	 * mode
+	 * 0: should be searched as 0-th word
+	 * 1: AND
+	 * 2: OR
+	 */
+	int len=2;
+	for (int i=0;i<len;i++){
+		if (DEBUG) cout << "word in searching " << word[i] << endl;
+	}
+	int m = mode;
+	int match_pages=0;
+	TrieNode pNode;
+	for(int i=0;i<page_cnt;i++){
+		pNode = pages[i];
+		int level = 0;
+		/*
+		 * BUG: var moved to correctly update
+		 */
+		int match_cnt_in_page=0;
+		char str[11];
+		if (DEBUG) cout << "*** searching page " << i << " with words in mode " << m << endl;
+		//printTrie(&pNode, str, 0);
+		if (DEBUG) cout << "*** print done" << endl;
+		for (int j=0;j<len;j++){
+			if (DEBUG) cout << "searching... " << word[j] << endl;
+			if (searchTrie(&pNode, word[j]) && !pNode.block && !pNode.removed){
+				match_cnt_in_page++;
+				if (DEBUG) cout << "found match in page " << i << ", " << match_cnt_in_page << " times" << endl;
+				//cout << "page " << i << " removed " << pNode.removed << " blocked " << pNode.block << endl;
+			}
+		}
+		if (mode==0){
+			if (match_cnt_in_page > 0){
+				if (DEBUG) cout << "mode 0" << endl;
+				match_pages++;
+			}
+		}
+		else if (mode==1){
+			if (match_cnt_in_page == len){
+				if (DEBUG) cout << "mode 1" << endl;
+				match_pages++;
+			}
+		}
+		else if (mode==2){
+			if (match_cnt_in_page > 0){
+				if (DEBUG) cout << "mode 2" << endl;
+				match_pages++;
+			}
+		} else {
+			if (DEBUG) cout << "nothing" << endl;
+
+		}
+
+	}
+	//printf("matching pages %d/n", match_pages);
+	//printf("matching pages %d/n");
+		//cout << "matching pages in mode "  <<  endl;
+
+	//int ssst = match_pages;
+	if (DEBUG) cout << "**** matching pages " << match_pages << " in mode "  << mode <<  endl;
+	return match_pages;
+	//return 0;
+}
