@@ -1,0 +1,16 @@
+
+
+void learn_phone(int M, char phone[32]) // 1 ¡Â M ¡Â 32
+{
+
+}
+
+void learn_word(int N, char word[20000][6]) // 1 ¡Â N ¡Â 20000
+{
+
+}
+
+void recognize(char in[6], char out[6]) // restore is called by 20,000. in, out: char[6]
+{
+
+}

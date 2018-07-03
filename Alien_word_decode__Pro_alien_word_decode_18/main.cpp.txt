@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+void learn_phone(int M, char phone[32]); // 1 ¡Â M ¡Â 32
+void learn_word(int N, char word[20000][6]); // 1 ¡Â N ¡Â 20000
+void recognize(char in[6], char out[6]); // restore is called by 20,000. in, out: char[6]
+
+char Answer[6];
+char Input[6];
+char Output[6];
+int M = 32;
+int N = 20000;
+char Word[20000][6];
+char Phone[32];
+
+int IsSame(char a[6], char b[6])
+{
+	int ret = 1;
+	for (int i = 0; i < 6; i++) {
+		if (a[i] != b[i]) {
+			ret = 0;
+			break;
+		}
+	}
+	return ret;
+}
+
+int main()
+{
+	freopen("UserInput.txt", "rt", stdin);
+
+	int T;
+	scanf("%d", &T);
+	int i,j;
+	int score = 0;
+	int isSame;
+
+	for (int testCase = 1; testCase <= T; testCase++) {
+
+		for (i = 0; i < 6; i++) {
+			scanf("%02x", &Answer[i]);
+		}
+
+		for (i = 0; i < 6; i++) {
+			scanf("%02x", &Input[i]);
+		}
+
+		for (i = 0; i < 32; i++) {
+			scanf("%02x", &Phone[i]);
+			
+		}
+
+		for (j = 0; j < 20000; j++) {
+			for (i = 0; i < 6; i++) {
+				scanf("%02x", &Word[j][i]);
+			}
+		}
+
+		learn_phone(32,Phone); // 1 ¡Â M ¡Â 32
+		learn_word(20000, Word); // 1 ¡Â N ¡Â 20000
+		recognize(Input, Output); // restore is called by 20,000. in, out: char[6]
+		
+		isSame = IsSame(Input, Output);
+		score += isSame;
+
+		printf("#%d %d\n",testCase,isSame);
+
+	}
+	printf("score : %d\n", score);
+	return 0;
+}
