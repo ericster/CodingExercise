@@ -2,7 +2,6 @@
 class UserSolution {
 	public static int NM = 10000; 
 	public static int NSize = 1000;
-	public static Memo[] memos; 
 	public static char[][] Note;
 
 	class Layer {
@@ -63,6 +62,17 @@ class UserSolution {
 		public int[] getCoord() {
 			return new int[] {this.y, this.x};
 		}
+		public void moveCoord(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+
+		public void modify(int height, int width, char[] txt){
+			this.h = height;
+			this.w = width;
+			this.txt = txt;
+		}
+
 
 		/*
 
@@ -78,12 +88,14 @@ class UserSolution {
 	}
 
 	Layer layers;
+	Memo[] memos; 
 	public void init(int mScreenSize)
 	{
 		// # of memos
 		memos = new Memo[NM];
 		Note = new char[NSize][NSize];
 		layers = new Layer();
+		
 	}
 
 	public void create_memo(int mId, int mY, int mX, int mHeight, int mWidth, char str[])
@@ -109,52 +121,22 @@ class UserSolution {
 	
 	public void move_memo(int mId, int mY, int mX)
 	{
-
+		memos[mId].moveCoord(mY, mX);
+		layers.get(mId);
 	}
 	
 	public void modify_memo(int mId, int mHeight, int mWidth, char str[])
 	{
-
+		memos[mId].modify(mHeight, mWidth, str);
+		layers.get(mId);
 	}
 	
 	public void get_screen_context(int mY, int mX, char res[][])
 	{
+		int cnt = layers.top;
+		System.out.println("layer no " + cnt);
+
 
 	}
 
-	class Node { 
-		int id;
-		Node next;
-		Node prev;
-		public Node() {
-			id = -1;
-			next = null;
-			prev = null;
-		}
-	}
-
-	// layer, doubly linked list
-	class Layer_LL {
-		Node head;
-		Node tail;
-		public Layer_LL(){
-			head = new Node();
-			tail = new Node();
-			head.next = tail;
-			tail.prev = head;
-		}
-
-		// put new node after head
-		public void put(int id){ 
-			Node newNode = new Node();
-			newNode.id = id;
-			newNode.prev = head;
-			newNode.next = head.next;
-			head.next.prev = newNode;
-			head.next = newNode;
-		}
-		public void get(int id){ 
-		}
-
-	}
 }
