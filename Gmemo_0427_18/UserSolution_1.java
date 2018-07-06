@@ -1,4 +1,4 @@
-class Memo {
+class Memo_1 {
 	
 	int NSize = 1000;
 	int id;
@@ -9,7 +9,7 @@ class Memo {
 	char[] txt;
 	char[][] table = new char[NSize][NSize]; 
 	
-	Memo(int id, int y, int x, int row, int col, char[] txt) {
+	Memo_1(int id, int y, int x, int row, int col, char[] txt) {
 		this.id = id;
 		this.y = y;
 		this.x = x;
@@ -29,16 +29,16 @@ class Memo {
 }
 
 
-class UserSolution {
+class UserSolution_1 {
 	public static int NM = 10000; 
 	public static int NSize = 1000;
-	public static Memo[] memos; 
+	public static Memo_1[] memos; 
 	public static char[][] Note;
 
 	public void init(int mScreenSize)
 	{
 		// # of memos
-		memos = new Memo[NM];
+		memos = new Memo_1[NM];
 		Note = new char[NSize][NSize];
 			
 	}
@@ -47,7 +47,7 @@ class UserSolution {
 	{
 
 		// #1, #2, #3
-		memos[mId] = new Memo(mId, mY, mX, mHeight, mWidth, str);
+		memos[mId] = new Memo_1(mId, mY, mX, mHeight, mWidth, str);
 
 	}
 

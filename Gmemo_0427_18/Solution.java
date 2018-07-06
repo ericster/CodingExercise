@@ -23,7 +23,7 @@ class Solution {
 	private static UserSolution user = new UserSolution();
 
 	public static void main(String[] args) throws Exception {
-//		System.setIn(new java.io.FileInputStream("sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("sample_input.txt"));
 		sc = new Scanner(System.in);
 
 		int T = sc.nextInt();
