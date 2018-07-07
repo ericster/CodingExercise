@@ -74,12 +74,6 @@ class UserSolution {
 		}
 
 
-		/*
-
-			 0 1 2 3 4 5
-				 2 3 4 5 6 
-				         6 7 9 ...
-		*/
 		public boolean isInScreen(int _y, int _x){
 			if ((_x + 4 < x) || (_x > x + w) || (_y + 4 < y) || (_y > y + h)) return false;
 			return true;
@@ -134,9 +128,26 @@ class UserSolution {
 	public void get_screen_context(int mY, int mX, char res[][])
 	{
 		int cnt = layers.top;
-		System.out.println("layer no " + cnt);
-
-
+		for (int i=0;i<cnt;i++){
+			/*
+				0 1 2 3 4 5
+					2 3 4 5 6 
+							6 7 9 ...
+			*/
+			if (memos[i].isInScreen(mY, mX)){
+				for (int k=0;k<5;k++){
+					char [] tmp = memos[i].txt;
+					int xx = memos[i].x;
+					int yy = memos[i].y;
+					int ww = memos[i].w;
+					int hh = memos[i].h;
+					for (int m=0;m<5;m++) {
+						res[k][m] = ( mY + k > yy  && mY + k < yy + hh && mX + m > xx && mX + m < xx + ww) ? tmp[ mX + m - xx + ww*(mY + k - yy)] : 0 ;  
+					}
+				}
+			}
+		}
+		//System.out.println("layer no " + cnt);
 	}
 
 }
