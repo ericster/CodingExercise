@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Arrays;
 
 class Solution {
 
@@ -124,9 +125,14 @@ class Solution {
 					X = screen_size - 5;
 
 				user.get_screen_context(Y, X, user_ans_str);
+				for (int p=0;p<5;p++){
+					System.out.println("user_ans_str ## " + Arrays.toString(user_ans_str[p]));
+				}
 				user_ans = make_hash(user_ans_str);
 
 				correct_ans = sc.nextInt();
+				System.out.println("     ");
+				System.out.println("*** user ans " + user_ans + " correct_ans " + correct_ans);
 
 				if (correct_ans == user_ans)
 					accepted++;
