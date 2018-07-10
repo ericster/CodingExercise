@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 class UserSolution {
 	public static int NM = 10000; 
@@ -52,7 +53,17 @@ class UserSolution {
 			this.x = x;
 			this.h = h;
 			this.w = w;
-			this.txt = txt;
+			int cnt=0;
+			for (int i=0;i<txt.length;i++){
+				if (txt[i] < 'a' || txt[i] > 'z') break;
+				cnt++;
+			}
+			this.txt = new char[cnt];
+			for (int i=0;i<cnt;i++){
+				this.txt[i] = txt[i];
+			}
+
+			System.out.println("Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
 		}
 		
 		public int getId() {
@@ -70,7 +81,18 @@ class UserSolution {
 		public void modify(int height, int width, char[] txt){
 			this.h = height;
 			this.w = width;
-			this.txt = txt;
+			//this.txt = txt;
+			int cnt=0;
+			for (int i=0;i<txt.length;i++){
+				if (txt[i] < 'a' || txt[i] > 'z') break;
+				cnt++;
+			}
+			this.txt = new char[cnt];
+			for (int i=0;i<cnt;i++){
+				this.txt[i] = txt[i];
+			}
+
+			System.out.println("Modified Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
 		}
 
 
@@ -146,6 +168,10 @@ class UserSolution {
 					}
 				}
 			}
+		}
+
+		for (int i=0;i<5;i++){
+			System.out.println("res " + Arrays.toString(res[i]));
 		}
 		//System.out.println("layer no " + cnt);
 	}
