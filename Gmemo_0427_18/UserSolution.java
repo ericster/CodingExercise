@@ -148,6 +148,7 @@ class UserSolution {
 	
 	public void get_screen_context(int mY, int mX, char res[][])
 	{
+		//res = new char[5][5];
 		System.out.println("get_screen_context");
 		System.out.println("select window " + mY + " " + mX );
 		int cnt = layers.top;
@@ -169,8 +170,8 @@ class UserSolution {
 				}
 				for (int k=0;k<5;k++){
 					for (int m=0;m<5;m++) {
-						res[k][m] = (k+mY < 1000 && m+mX < 1000 && res[k][m] == '\0' && res[k][m] != note[k+mY][m+mX]) 
-						? note[k+mY][m+mX] : res[k][m] ;
+						// overwrite with the new value
+						res[k][m] = (k+mY < 1000 && m+mX < 1000 &&  note[k+mY][m+mX] != '\0') ? note[k+mY][m+mX] : res[k][m] ;
 					}
 				}
 				for (int p=0;p<5;p++){

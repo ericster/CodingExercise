@@ -124,6 +124,7 @@ class Solution {
 				if (X + 5 >= screen_size)
 					X = screen_size - 5;
 
+				user_ans_str = new char[5][5];
 				user.get_screen_context(Y, X, user_ans_str);
 				for (int p=0;p<5;p++){
 					System.out.println("user_ans_str ## " + Arrays.toString(user_ans_str[p]));
