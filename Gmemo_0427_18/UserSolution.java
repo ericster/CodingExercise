@@ -1,5 +1,7 @@
 import java.util.Arrays;
 
+import java.util.Arrays;
+
 class UserSolution {
 	public static int NM = 10000; 
 	public static int NSize = 1000;
@@ -19,15 +21,27 @@ class UserSolution {
 
 		// move, modify, select 
 		public void get(int x){
+			int idx=-1;
 			for (int i=0;i<=top;i++){
 				if (layer[i] == x) {
-					for (int j=i;j<top;j++){
-						layer[i] = layer[i+1];
-					}
-					layer[top] = x;
-					break;
+					idx = i;
 				}
 			}
+
+			for (int i=idx;i<top;i++){
+				layer[i] = layer[i+1];
+			}
+			layer[top] = x;
+		}
+
+		public void display(){
+			int[]  tmp = new int[top+1];
+			for (int i=0;i<=top;i++){
+				tmp[i] = layer[i];
+			}
+
+			System.out.println("layers " + Arrays.toString(tmp));
+ 
 		}
 
 	}
@@ -52,12 +66,17 @@ class UserSolution {
 				cnt++;
 			}
 			int size = (h*w > cnt) ? cnt : h*w;
-			this.txt = new char[size];
-			for (int i=0;i<size;i++){
-				this.txt[i] = txt[i];
+			this.txt = new char[h*w];
+			for (int i=0;i<h*w;i++){
+				if (i < size ){
+					this.txt[i] = txt[i];
+				}
+				else{
+					this.txt[i] = '\0';	
+				}
 			}
 
-			System.out.println("Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
+			//System.out.println("Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
 		}
 		
 		public int getId() {
@@ -67,7 +86,7 @@ class UserSolution {
 		public int[] getCoord() {
 			return new int[] {this.y, this.x};
 		}
-		public void moveCoord(int x, int y){
+		public void moveCoord(int y, int x){
 			this.x = x;
 			this.y = y;
 		}
@@ -82,12 +101,17 @@ class UserSolution {
 				cnt++;
 			}
 			int size = (h*w > cnt) ? cnt : h*w;
-			this.txt = new char[size];
-			for (int i=0;i<cnt;i++){
-				this.txt[i] = txt[i];
+			this.txt = new char[h*w];
+			for (int i=0;i<h*w;i++){
+				if (i < size ){
+					this.txt[i] = txt[i];
+				}
+				else{
+					this.txt[i] = '\0';	
+				}
 			}
 
-			System.out.println("Modified Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
+			//System.out.println("Modified Memo " + "length " + cnt + " "  + Arrays.toString(this.txt));
 		}
 
 
@@ -113,7 +137,8 @@ class UserSolution {
 	{
 
 		// #1, #2, #3
-		System.out.println("create_memo");
+		//System.out.println("create_memo");
+		//System.out.println("layers " + mId + " " + " mY " + mY + " mX " + mX + " h " + mHeight + " w " + mWidth);
 		memos[mId] = new Memo(mId, mY, mX, mHeight, mWidth, str);
 		layers.push(mId);
 
@@ -121,7 +146,7 @@ class UserSolution {
 
 	public AXIS select_memo(int mId)
 	{
-		System.out.println("select_memo");
+		//System.out.println("select_memo");
 		AXIS ret = new AXIS();
 		int[] coord = new int[2];
 		coord = memos[mId].getCoord();
@@ -134,14 +159,17 @@ class UserSolution {
 	
 	public void move_memo(int mId, int mY, int mX)
 	{
-		System.out.println("move_memo");
+		//System.out.println("move_memo");
 		memos[mId].moveCoord(mY, mX);
+		//System.out.println("layers " + mId + " " + " mY " + mY + " mX " + mX );
+		//layers.display();
 		layers.get(mId);
+		//layers.display();
 	}
 	
 	public void modify_memo(int mId, int mHeight, int mWidth, char str[])
 	{
-		System.out.println("modify_memo");
+		//System.out.println("modify_memo");
 		memos[mId].modify(mHeight, mWidth, str);
 		layers.get(mId);
 	}
@@ -149,19 +177,19 @@ class UserSolution {
 	public void get_screen_context(int mY, int mX, char res[][])
 	{
 		//res = new char[5][5];
-		System.out.println("get_screen_context");
-		System.out.println("select window " + mY + " " + mX );
+		//System.out.println("get_screen_context");
+		//System.out.println("select window " + mY + " " + mX );
 		int cnt = layers.top;
-		System.out.println("# of layers " + cnt);
+		//System.out.println("# of layers " + cnt);
 		for (int i=0;i<=cnt;i++){
-			if (memos[i].isInScreen(mY, mX)){
-				System.out.println("included layer " + i); 
-				int xx = memos[i].x;
-				int yy = memos[i].y;
-				int ww = memos[i].w;
-				int hh = memos[i].h;
-				char [] tmp = memos[i].txt;
-				System.out.println("tmp yy " + yy + " xx " + xx + " hh " + hh + " ww " + ww + " " + Arrays.toString(tmp));
+			if (memos[layers.layer[i]].isInScreen(mY, mX)){
+				//System.out.println("included layer " + layers.layer[i]); 
+				int xx = memos[layers.layer[i]].x;
+				int yy = memos[layers.layer[i]].y;
+				int ww = memos[layers.layer[i]].w;
+				int hh = memos[layers.layer[i]].h;
+				char [] tmp = memos[layers.layer[i]].txt;
+				////System.out.println("tmp yy " + yy + " xx " + xx + " hh " + hh + " ww " + ww + " " + Arrays.toString(tmp));
 				char [][] note = new char [1000][1000];
 				for (int k=0;k<1000;k++){
 					for (int m=0;m<1000;m++){
@@ -175,13 +203,13 @@ class UserSolution {
 					}
 				}
 				for (int p=0;p<5;p++){
-					System.out.println("res ## " + Arrays.toString(res[p]));
+					//System.out.println("res ## " + Arrays.toString(res[p]));
 				}
 			}
 		}
 
 		for (int i=0;i<5;i++){
-			System.out.println("res " + Arrays.toString(res[i]));
+			//System.out.println("res " + Arrays.toString(res[i]));
 		}
 	}
 
