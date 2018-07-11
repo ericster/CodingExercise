@@ -146,7 +146,7 @@ class UserSolution {
 
 	public AXIS select_memo(int mId)
 	{
-		//System.out.println("select_memo");
+		//System.out.println("select_memo " + mId);
 		AXIS ret = new AXIS();
 		int[] coord = new int[2];
 		coord = memos[mId].getCoord();
@@ -169,7 +169,7 @@ class UserSolution {
 	
 	public void modify_memo(int mId, int mHeight, int mWidth, char str[])
 	{
-		//System.out.println("modify_memo");
+		//System.out.println("modify_memo " + mId);
 		memos[mId].modify(mHeight, mWidth, str);
 		layers.get(mId);
 	}
@@ -199,7 +199,8 @@ class UserSolution {
 				for (int k=0;k<5;k++){
 					for (int m=0;m<5;m++) {
 						// overwrite with the new value
-						res[k][m] = (k+mY < 1000 && m+mX < 1000 &&  note[k+mY][m+mX] != '\0') ? note[k+mY][m+mX] : res[k][m] ;
+						//res[k][m] = (k+mY < 1000 && m+mX < 1000 &&  note[k+mY][m+mX] != '\0') ? note[k+mY][m+mX] : res[k][m] ;
+						res[k][m] = (k+mY >= yy && k+mY < yy+hh && m+mX >= xx && m+mX < xx + ww ) ? note[k+mY][m+mX] : res[k][m] ;
 					}
 				}
 				for (int p=0;p<5;p++){
