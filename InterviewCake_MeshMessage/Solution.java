@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,36 +28,18 @@ class Solution{
         */
         //List<Node> graph = new ArrayList<Node>();
         Map<String, String[]> graph = new HashMap<String,String[]>();
+        /*
         String[] str = new String[]{"Min", "Jayden", "Omar"};
         int[] arr_int = new int[]{1, 2, 3};
-        Node min = new Node("Min", 
-        new String[]{"Min", "Jayden", "Omar"}
-    );
-        Node william = new Node("William", 
-        new String[]{"Min", "Noam"}
-    );
-        Node jayden = new Node("Min", 
-        new String[]{"Min", "Amelia", "Ren", "Noam"}
-    );
-        Node ren = new Node("Min", 
-        new String[]{"Jayden", "Omar"}
-    );
-        Node amelia = new Node("Min", 
-        new String[]{"Jayden", "Adm", "Miguel"}
-    );
-        Node adam = new Node("Min", 
-        new String[]{"Amelia", "Miguel", "Sofia", "Lucas"}
-    );
-        Node miquel = new Node("Min", 
-        new String[]{"Amelia", "Adam", "Liam", "Nathan"}
-    );
-        Node noam = new Node("Min", 
-        new String[]{"Nathan", "Jayden", "William"}
-    );
-        Node omar = new Node("Min", 
-        new String[]{"Ren", "Min", "Scott"}
-    );
-        /*
+        Node min = new Node("Min", new String[]{"Min", "Jayden", "Omar"});
+        Node william = new Node("William", new String[]{"Min", "Noam"});
+        Node jayden = new Node("Min", new String[]{"Min", "Amelia", "Ren", "Noam"});
+        Node ren = new Node("Min", new String[]{"Jayden", "Omar"});
+        Node amelia = new Node("Min", new String[]{"Jayden", "Adm", "Miguel"});
+        Node adam = new Node("Min", new String[]{"Amelia", "Miguel", "Sofia", "Lucas"});
+        Node miquel = new Node("Min", new String[]{"Amelia", "Adam", "Liam", "Nathan"});
+        Node noam = new Node("Min", new String[]{"Nathan", "Jayden", "William"});
+        Node omar = new Node("Min", new String[]{"Ren", "Min", "Scott"});
         graph.add(min);
         graph.add(william);
         graph.add(jayden);
@@ -71,7 +54,7 @@ class Solution{
         graph.put("William", new String[]{"Min", "Noam"} );
         graph.put("Jayden", new String[]{"Min", "Amelia", "Ren", "Noam"});
         graph.put("Ren", new String[]{"Jayden", "Omar"});
-        graph.put("Amelia", new String[]{"Jayden", "Adm", "Miguel"});
+        graph.put("Amelia", new String[]{"Jayden", "Adam", "Miguel"});
         graph.put("Adam", new String[]{"Amelia", "Miguel", "Sofia", "Lucas"});
         graph.put("Miguel", new String[]{"Amelia", "Adam", "Liam", "Nathan"});
         graph.put("Noam", new String[]{"Nathan", "Jayden", "William"});
@@ -90,26 +73,37 @@ class Solution{
         int level = 0;
         while(!queue.isEmpty()){
             level++;
-            String v = queue.poll();
-            edges = g.get(v);
-            for (int i=0;i<edges.length;i++){
-                queue.offer(edges[i]);
-            }
-            
-            if (!visited.contains(v)){
-                visited.add(v);
-                result.add(v);
-                if (v == end){
-                    break;
+            int q_size = queue.size();
+            for (int i=0;i<q_size;i++){
+                String v = queue.poll();
+                System.out.println("vertex " + v);
+                if (v.equals(end)){
+                    System.out.println("shorted distance " + level);
+
+                    String[] visted_arr = new String[visited.size()];
+                    visted_arr = visited.toArray(visted_arr);
+                    System.out.println("visited array " + Arrays.toString(visted_arr)); 
+
+                    return;
                 }
-                else { 
-                    edges = g.get(v);
-                    for (int i=0;i<edges.length;i++){
-                        queue.offer(edges[i]);
+                if (!visited.contains(v)){
+                    visited.add(v);
+                }else{
+                    continue;
+                }
+                edges = g.get(v);
+                if (edges != null){
+                    System.out.println("v: " + v + " edges length: " +edges.length + " " + Arrays.toString(edges));
+                    for (int j=0;j<edges.length;j++){
+                        if (!visited.contains(edges[j])){
+                            queue.offer(edges[j]);
+                        }
                     }
                 }
 
+
             }
+
 
         }
     }
