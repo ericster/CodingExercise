@@ -68,44 +68,50 @@ class Solution{
     public static void bfs(Map<String, String[]> g, String start, String end, List<String> result){
         Queue<String> queue = new LinkedList<String>();
         Set<String> visited = new HashSet<String>();
+        Map<String, String> hm = new HashMap<String,String>();
         queue.offer(start);
+        hm.put(start, null);
         String[] edges ;
-        int level = 0;
         while(!queue.isEmpty()){
-            level++;
-            int q_size = queue.size();
-            for (int i=0;i<q_size;i++){
-                String v = queue.poll();
-                System.out.println("vertex " + v);
-                if (v.equals(end)){
-                    System.out.println("shorted distance " + level);
-
-                    String[] visted_arr = new String[visited.size()];
-                    visted_arr = visited.toArray(visted_arr);
-                    System.out.println("visited array " + Arrays.toString(visted_arr)); 
-
-                    return;
-                }
-                if (!visited.contains(v)){
-                    visited.add(v);
-                }else{
-                    continue;
-                }
-                edges = g.get(v);
-                if (edges != null){
-                    System.out.println("v: " + v + " edges length: " +edges.length + " " + Arrays.toString(edges));
-                    for (int j=0;j<edges.length;j++){
-                        if (!visited.contains(edges[j])){
-                            queue.offer(edges[j]);
-                        }
+            String v = queue.poll();
+            System.out.println("vertex " + v);
+            if (v.equals(end)){
+                String[] visted_arr = new String[visited.size()];
+                visted_arr = visited.toArray(visted_arr);
+                System.out.println("visited array " + Arrays.toString(visted_arr)); 
+                printPath(hm,start, end);
+                return;
+            }
+            if (!visited.contains(v)){
+                visited.add(v);
+            }else{
+                continue;
+            }
+            edges = g.get(v);
+            if (edges != null){
+                System.out.println("v: " + v + " edges length: " +edges.length + " " + Arrays.toString(edges));
+                for (int i=0;i<edges.length;i++){
+                    if (!visited.contains(edges[i])){
+                        queue.offer(edges[i]);
+                        hm.put(edges[i], v);
                     }
                 }
-
-
             }
-
-
         }
+    }
+    // a, null
+    // b, a
+    // c, b
+    public static void printPath(Map<String,String> hm, String start, String end){
+        List<String> res= new ArrayList<String>();
+        String current = end;
+        res.add(current);
+        while(hm.get(current) != null){
+            current = hm.get(current);
+            res.add(current);
+        }
+        System.out.println("result " + Arrays.toString(res.toArray(new String[res.size()])));
+
     }
 
     static class Node {
