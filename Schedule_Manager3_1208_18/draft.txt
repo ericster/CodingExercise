@@ -1,0 +1,87 @@
+
+0 <= uid <= 999
+0 <= gid <= 99
+
+gid - (id, ename) <- head ...
+/*
+	map;
+	LinkeList;
+
+*/
+
+class Group{
+	Map<String, Queue<Integer>> ename_hmap = hmap(ename, idList) // <= 200
+      	Map<Integer, List<Strig>> id_hmap = hmap(id, enameList)      // <= 1000
+}
+   
+Queue<Integer> idList = new LinkeList<>();  // <= 5
+List<String> enameList = new ArrayList<>(); // <= 200
+
+init(){
+	int gidCnt;
+	Group[] gid_group= new Group[100];
+}
+addEvent(id, ename, gid){
+	if (gid_group[gid] == null) gidCnt++;
+	gid_group[gid] = new Group();
+	group = gid_group[gid];
+	group.ename_hmap = new HashMap<>();
+	group.id_hmap = new HashMap<>();
+	emap = group.ename_hmap ;
+	idmap = group.id_hamp;
+	// ename
+	Queue<Integer> idList = emap.get(ename);
+	idList.add(id);
+	emap.put(ename, idList);
+	// id
+	List<String> enameList = idmap.get(id);
+	enameList.add(ename);
+	idmap.put(id, enameList);
+}
+
+deleteEvent(id, ename){
+	int del_cnt = 0;
+	for (int i = 0; i < gidCnt; i++){
+		groud = gid_group[i];
+		idmap = group.id_map;
+		emap = group.ename_map;
+		List<String> enameList = idmap.get(id);
+		for (String ename : enameList){
+			Queue<Integer> idList = emap.get(ename);
+			for (int j = 0; j < 5; j++){
+				if (idList(j) == id) {
+					if (j == 0) {
+						// delete all
+						del_cnt += size;
+					}
+					else {
+						// shift
+						del_cnt++;
+					}
+				}
+			}
+			
+		}
+	}
+	return del_cnt;
+}
+
+
+changeEvent(id, ename, cname){
+
+
+}
+
+getCount(id){
+	for (int i = 0; i < gidCnt; i++){
+		Queue<Integer> idList = map.get(id);
+		
+	}
+
+}
+
+
+
+
+
+

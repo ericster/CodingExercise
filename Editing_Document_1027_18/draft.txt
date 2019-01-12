@@ -1,0 +1,80 @@
+
+
+
+0. Init()
+1. maximum newline 999 -> row[1000]
+2. consecutive characters 1000 -> col[1000] -> width of note
+3. newline are not affected when EditDone() is called
+4. lowercase letters 'a' ~ 'z'
+5. CallEdit() -> 1 api(Add(), Deletec(), Substitute()) -> EditDone()
+6. # of overlapping users is 30
+7. total number of calls for functions is 50,000.
+
+<ex1>
+seq: 1 - (1,Add(2, "qw") - 2 - (2,Delete) -  3 - EditDone(1) - (3, Substitue) - 1 - (1, Add)
+- EditDone(3) - EditDone(2) - EditDone(1) 
+class EditId(){
+	Edit(int id);
+	int id;
+	int r;
+	int c;
+	int command; // 1:Add, 2:Delete, 3:Substitue
+	boolean conflict;
+}
+
+Edit[] command_id = new Edit[50000]
+id[1] = new Edit(1); 
+id[2] = new Edit(2); 
+id[2] = new Edit(3); 
+
+Edit edit = id[1]
+
+s a m p l e
+t e x t
+s e c o n d
+n e x t l i
+n e
+
+s a m p l e
+t e x t
+s e q w c1(x) o2 
+n d(1) 
+n e3 x t l i
+n e
+
+<ex2>
+seq: 1 - 2 - 3 - (1,Substitue) - (3,Add) - (2,Delete) - EditDone(2) - EditDone(1,conflict) - EditDone(2,conflict) 
+
+3 - 2 - 1 - (2,Add) - (1,Substitute) - EditDone(2) - (3,Delete) - EditDone(3, conflict) - 2 - (2, Delete) - EditDone(1) - EditDone(2, conflict)
+
+Data Structure
+
+
+Edit[] note = new Edit[1000][width];
+char[][] = note new[1000][width]
+int[][] = id new[1000][width]
+
+id[2][2] = new Edit(1), 1 -> linkedList, array[30]
+id[2][3] = new Edit(2), 2 
+id[3][1] = new Edit(3), 3
+
+
+
+
+
+class edit
+id: 
+state: valid/conflic
+row/col:
+length: 
+absolute coord:
+command: 
+
+
+editor
+width:
+command map: id, command
+
+
+check_overlap()
+
