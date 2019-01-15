@@ -122,20 +122,20 @@ class UserSolution {
 	void init()
 	{
 		// 1. Hashtable for group
-		Hashtable[] tb = new  Hashtable[MAX_GROUP];
+		tb = new  Hashtable[MAX_GROUP];
 		int capacity = 200;
 		for (int i = 0; i < MAX_GROUP; i++ ) {
 			tb[i] = new Hashtable(capacity);
 		}
 		
 		// 2. uid array of list
-		Node[] uid_arr = new Node[1000];
+		uid_arr = new Node[1000];
 		for (int i = 0; i < 1000; i++) {
 			uid_arr[i] = new Node();
 		}
 		
 		// 3. count array
-		int[] count = new int[MAX_USER];
+		count = new int[MAX_USER];
 	}
 
 	void addEvent(int uid, char ename[], int groupid)
@@ -165,10 +165,12 @@ class UserSolution {
 			int gid = head.gid;
 			Hashtable g_table = tb[gid];
 			int[] res =  g_table.remove(ename.toString(), uid); 
-			for (int i = 0; i < res.length; i++) {
-				if (res[i] != 0) {
-					count[res[i]]--;
-					del_cnt--;
+			if (res != null) {
+				for (int i = 0; i < res.length; i++) {
+					if (res[i] != 0) {
+						count[res[i]]--;
+						del_cnt--;
+					}
 				}
 			}
 		}
@@ -185,12 +187,14 @@ class UserSolution {
 			int gid = head.gid;
 			Hashtable g_table = tb[gid];
 			int[] res = g_table.remove(ename.toString(), uid);
-			for (int i = 0; i < res.length; i++) {
-				if (res[i] != 0) {
-					int uuid = res[i];
-					addEvent(uuid, ename, gid);
-					count[res[i]]--;
-					chn_cnt--;
+			if (res != null) {
+				for (int i = 0; i < res.length; i++) {
+					if (res[i] != 0) {
+						int uuid = res[i];
+						addEvent(uuid, ename, gid);
+						count[res[i]]--;
+						chn_cnt--;
+					}
 				}
 			}
 		}
