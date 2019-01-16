@@ -1,5 +1,6 @@
+import java.util.Arrays;
+
 class UserSolution {	
-	
 
 	class Hash {
 		String ename;
@@ -33,23 +34,25 @@ class UserSolution {
 		
 		boolean put(String key, int data) {
 			int h = hash(key);
+			int nouid = tb[h].no_uid;
 			while(tb[h].ename != null ) {
 				if (tb[h].ename.equals(key)) {
+					nouid = tb[h].no_uid;
+					tb[h].uid[nouid] = data; 
+					tb[h].no_uid++;
+					System.out.println("non-master uid " );
 					return false;
 				}
 				h = (h + 1) % capacity;
 			}
 			tb[h].ename = key;
-			int nouid = tb[h].no_uid;
-			if (nouid < 1) {
-				tb[h].master_uid = data;
-				tb[h].uid[nouid] = data;
-				tb[h].no_uid++;
-			}
-			else {
-				tb[h].uid[nouid] = data; 
-				tb[h].no_uid++;
-			}
+			nouid = tb[h].no_uid;
+			System.out.println("no_uid " + nouid);
+			tb[h].master_uid = data;
+			tb[h].uid[nouid] = data;
+			tb[h].no_uid++;
+			System.out.println("master uid " );
+			System.out.println("no_uid " + tb[h].no_uid);
 			
 			return true;
 		}
@@ -82,7 +85,7 @@ class UserSolution {
 						int[] uid_arr = tb[h].uid;
 						for (int i = 1; i < tb[h].no_uid; i++) {
 							if (uid_arr[i] == data) {
-								for (int j =i; j < tb[h].no_uid-1; j++) {
+								for (int j =i; j < tb[h].no_uid; j++) {
 									uid_arr[j] = uid_arr[j+1];
 								}
 								return new int[] {data};
@@ -138,16 +141,35 @@ class UserSolution {
 		count = new int[MAX_USER];
 	}
 
+	String getStr(char ename[]) {
+		int len = 0;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 15; i++) {
+			if (ename[i] != 0) {
+				sb.append(ename[i]);
+			}
+			else {
+				break;
+			}
+		}
+		return sb.toString();
+	}
 	void addEvent(int uid, char ename[], int groupid)
 	{
 		// table
 		Hashtable g_table = tb[groupid];
-		g_table.put(ename.toString(), uid);
+		//System.out.println(" ename converted " + getStr(ename));
+		System.out.println("***uid " + uid + " ename " + getStr(ename) + " gid " + groupid);
+		
+		String en = getStr(ename);
+
+		g_table.put(en, uid);
+		System.out.println(" g_table " +  en + " " + groupid + " " + Arrays.toString(g_table.get(en)) );
 		
 		
 		// uid list array ***
 		Node head = uid_arr[uid];
-		head.next = new Node(ename.toString(), groupid, head, head.next);
+		head.next = new Node(en, groupid, head, head.next);
 		if (head.next.next != null) head.next.next.prev = head.next;
 		
 		// count array
@@ -157,28 +179,45 @@ class UserSolution {
 	int deleteEvent(int uid, char ename[])
 	{
 		
+		String en = getStr(ename);
+		System.out.println("##### DeleteEvent " + uid + " " + en );
+		// uid list array ***
 		Node head = uid_arr[uid];
 		int del_cnt = 0;
 		// table
 		while (head.next != null) {
 			head = head.next;
-			int gid = head.gid;
-			Hashtable g_table = tb[gid];
-			int[] res =  g_table.remove(ename.toString(), uid); 
-			if (res != null) {
-				for (int i = 0; i < res.length; i++) {
-					if (res[i] != 0) {
-						count[res[i]]--;
-						del_cnt--;
+			if (head.ename.equals(en)) {
+				int gid = head.gid;
+				Hashtable g_table = tb[gid];
+				int[] res =  g_table.remove(en, uid); 
+				System.out.println("##### deleteEvent res " + gid + " " + Arrays.toString(res));
+				if (res != null) {
+					for (int i = 0; i < res.length; i++) {
+						if (res[i] != 0) {
+							
+							// count array
+							count[res[i]]--;
+							del_cnt++;
+						}
 					}
 				}
+				// uid list array update *** 
+				Node tmp = head;
+				tmp.prev.next = tmp.next;
+				if (tmp.next != null) tmp.next.prev = tmp.prev;
 			}
+
 		}
+		System.out.println("##%% deleteEvent " + uid + " " + en + " cnt: " + del_cnt);
 		return del_cnt;
 	}
 
 	int changeEvent(int uid, char ename[], char cname[])
 	{
+		String en = getStr(ename);
+		String cn = getStr(cname);
+		System.out.println("##### ChangeEvent " + uid + " " + en + " to " + cn);
 		Node head = uid_arr[uid];
 		int chn_cnt = 0;
 		// table
@@ -186,23 +225,32 @@ class UserSolution {
 			head = head.next;
 			int gid = head.gid;
 			Hashtable g_table = tb[gid];
-			int[] res = g_table.remove(ename.toString(), uid);
-			if (res != null) {
-				for (int i = 0; i < res.length; i++) {
-					if (res[i] != 0) {
-						int uuid = res[i];
-						addEvent(uuid, ename, gid);
-						count[res[i]]--;
-						chn_cnt--;
+			if (head.ename.equals(en)) {
+				int[] res = g_table.remove(en, uid);
+				System.out.println("##### changeEvent remove res " + Arrays.toString(res));
+				if (res != null) {
+					for (int i = 0; i < res.length; i++) {
+						if (res[i] != 0) {
+							int uuid = res[i];
+							addEvent(uuid, cname, gid);
+							count[res[i]]--;
+							chn_cnt++;
+						}
 					}
 				}
+				// uid list array update *** 
+				Node tmp = head;
+				tmp.prev.next = tmp.next;
+				if (tmp.next != null) tmp.next.prev = tmp.prev;
 			}
 		}
+		System.out.println("##%% changeEvent " + uid + " " + en + " " + cn + " cnt: " + chn_cnt);
 		return chn_cnt; 
 	}
 
 	int getCount(int uid)
 	{
+		System.out.println("##%% getCount " + uid + " # " + count[uid]);
 		return count[uid];
 	}
 }
