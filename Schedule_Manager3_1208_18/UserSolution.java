@@ -24,9 +24,10 @@ class UserSolution {
 		public Node() {
 			
 		}
-		public Node(String e, int g, Node p, Node n) {
+		public Node(String e, int g, int u, Node p, Node n) {
 			ename = e;
 			gid = g;
+			uid = u;
 			prev = p;
 			next = n;
 		}
@@ -164,30 +165,37 @@ class UserSolution {
 
 		// uid list array ***
 		Node head = uid_arr[uid];
-		head.next = new Node(en, groupid, head, head.next);
+		head.next = new Node(en, groupid, uid, head, head.next);
 		if (head.next.next != null) head.next.next.prev = head.next;
 
 		ENode enode;
 		Node unode;
-		// non-maaster
+		// non-master
 		if (g_table.get(en) != null) {
+			System.out.println("non-master ");
 			enode = g_table.get(en);
 			if (enode.master_uid != uid) {
 				enode.no_uid++;
-				unode = new Node(en, uid, enode.uid_head, enode.uid_head.next);
+				unode = new Node(en, groupid, uid, enode.uid_head, enode.uid_head.next);
 				enode.uid_head.next = unode;
 				if (unode.next != null) unode.next.prev = unode;
 				// *** ref
 				unode.adr = head.next;
+				System.out.println("non-master added " + head.next.uid);
+				g_table.put(en, enode);
 			}
 		}
 		// master
 		else {
+			System.out.println("master ");
 			enode = new ENode(en, groupid, uid, 1, new Node()); 
-			unode = new Node(en, uid, enode.uid_head, enode.uid_head.next);
+			unode = new Node(en, groupid, uid, enode.uid_head, enode.uid_head.next);
 			enode.uid_head.next = unode;
+			enode.no_uid++;
 			// *** ref
 			unode.adr = head.next;
+			System.out.println(" master added " + head.next.uid);
+			g_table.put(en, enode);
 		}
 
 		System.out.println(" g_table " +  en + " " + groupid + " " );
@@ -211,36 +219,42 @@ class UserSolution {
 		// table
 		while (uhead.next != null) {
 			uhead = uhead.next;
+			System.out.println("uhead name: " + uhead.ename + " gid: " + uhead.gid);
 			if (uhead.ename.equals(en)) {
 				int gid = uhead.gid;
 				Hashtable g_table = tb[gid];
 				// g_table update
 				if (g_table.get(en) != null) {
-					// non-maaster
+					// non-master
 					ENode enode = g_table.get(en);
+					System.out.println(" master uid: " + enode.master_uid);
 					if (enode.master_uid != uid) {
+						System.out.println(" non-master uid: " );
 						Node head_tmp = enode.uid_head;
 						while (head_tmp.next != null) {
-							Node htmp = head_tmp.next;
-							if (htmp.uid == uid) {
-								del_node(htmp);
-								del_node(htmp.adr);
+							head_tmp = head_tmp.next;
+							System.out.println(" head_tmp: " + head_tmp.uid );
+							if (head_tmp.uid == uid) {
+								del_node(head_tmp);
+								del_node(head_tmp.adr);
 								count[uid]--;
 								del_cnt++;
+								enode.no_uid--;
 							}
 						}
 						g_table.put(en, enode);
 					}
 					else {
 						// master
+						System.out.println(" master uid: " );
 						Node head_tmp = enode.uid_head;
 						while (head_tmp.next != null) {
-							Node htmp = head_tmp.next;
+							head_tmp = head_tmp.next;
 							// ** other uids 
-							del_node(htmp.adr);
-							count[htmp.uid]--;
+							del_node(head_tmp.adr);
+							count[head_tmp.uid]--;
+							del_cnt++;
 						}
-						del_cnt += enode.no_uid;
 						g_table.remove(en);
 					}
 					// remove from uid list
@@ -249,7 +263,7 @@ class UserSolution {
 				
 			}
 		}
-		System.out.println("##%% deleteEvent " + uid + " " + en + " cnt: " + del_cnt);
+		System.out.println("Ans ##%% deleteEvent " + uid + " " + en + " cnt: " + del_cnt);
 		return del_cnt;
 	}
 
@@ -273,10 +287,10 @@ class UserSolution {
 					if (enode.master_uid != uid) {
 						Node head_tmp = enode.uid_head;
 						while (head_tmp.next != null) {
-							Node htmp = head_tmp.next;
-							if (htmp.uid == uid) {
-								del_node(htmp);
-								del_node(htmp.adr);
+							head_tmp = head_tmp.next;
+							if (head_tmp.uid == uid) {
+								del_node(head_tmp);
+								del_node(head_tmp.adr);
 								count[uid]--;
 								chn_cnt++;
 								addEvent(uid, cname, gid);
@@ -287,14 +301,18 @@ class UserSolution {
 					else {
 						// master
 						Node head_tmp = enode.uid_head;
+						// add master uid first
+						addEvent(uid, cname, gid);
 						while (head_tmp.next != null) {
-							Node htmp = head_tmp.next;
+							head_tmp = head_tmp.next;
 							// ** other uids 
-							addEvent(htmp.uid, cname, gid);
-							del_node(htmp.adr);
-							count[htmp.uid]--;
+							if (head_tmp.uid != uid) {
+								addEvent(head_tmp.uid, cname, gid);
+							}
+							del_node(head_tmp.adr);
+							count[head_tmp.uid]--;
+							chn_cnt++;
 						}
-						chn_cnt += enode.no_uid;
 						g_table.remove(en);
 					}
 					// remove from uid list
@@ -304,13 +322,13 @@ class UserSolution {
 			}
 		}
 
-		System.out.println("##%% changeEvent " + uid + " " + en + " " + cn + " cnt: " + chn_cnt);
+		System.out.println("Ans ##%% changeEvent " + uid + " " + en + " " + cn + " cnt: " + chn_cnt);
 		return chn_cnt; 
 	}
 
 	int getCount(int uid)
 	{
-		System.out.println("##%% getCount " + uid + " # " + count[uid]);
+		System.out.println("Ans ##%% getCount " + uid + " # " + count[uid]);
 		return count[uid];
 	}
 }
