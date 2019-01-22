@@ -2,8 +2,9 @@ import java.util.Scanner;
 
 class Solution {	
 	private static Scanner sc;
-	private static UserSolution usersolution = new UserSolution();
+	private static UserSolution2 usersolution = new UserSolution2();
 	
+	private final static boolean LOG		= true;
 	private final static int INIT			= 0;
 	private final static int ADD			= 1;
 	private final static int DELETE			= 2;
@@ -47,6 +48,7 @@ class Solution {
 
 			switch (cmd) {
 			case ADD:
+				p2 = 0;
 				if (flag == 1){
 					p1 = sc.nextInt();
 					String str = sc.next();
@@ -61,11 +63,15 @@ class Solution {
 					p2 = sc.nextInt();
 					p3 = sc.nextInt();
 					make_string(str1, p2);
+				}
+				if (LOG && (p1 == 499 || p1 == 434 || p2 == 4513)) {
+					System.out.println("	command: " + i + " Add " + p1 + " " + usersolution.getStr(str1)+ " " + p3 );
 				}
 				usersolution.addEvent(p1, str1, p3);
 				break;
 
 			case DELETE:
+				p2 = 0;
 				if (flag == 1){
 					p1 = sc.nextInt();
 					String str = sc.next();
@@ -81,12 +87,19 @@ class Solution {
 					p3 = sc.nextInt();
 					make_string(str1, p2);
 				}
+				if (LOG && ( (p1 == 499) || (p1 == 434) )) {
+					System.out.println("	command: " + i + " Delete " + p1 + " " + usersolution.getStr(str1) );
+				}
 				ret = usersolution.deleteEvent(p1, str1);
-				if (ret != p3)
+				if (ret != p3) {
+					System.out.println("command: " + i + " Delete " + p1 + " : p2 " + p2 + " " + usersolution.getStr(str1) + " ret: " + ret + " expected: " + p3);
 					answer = 0;
+				}
 				break;
 
 			case CHANGE:
+				p2 = 0;
+				p3 = 0;
 				if (flag == 1){
 					p1 = sc.nextInt();
 					String str = sc.next();
@@ -110,16 +123,23 @@ class Solution {
 					make_string(str2, p3);
 				}
 				ret = usersolution.changeEvent(p1, str1, str2);
-				if (ret != p4)
+				if (p1 == 499 || p1 == 434 || p2 == 4513 || p3 == 4513) {
+					System.out.println("	command: " + i + " Change " + p1 + " " + usersolution.getStr(str1)+ " " + usersolution.getStr(str2) );
+				}
+				if (ret != p4) {
+					System.out.println("command: " + i + " Change ret: " + ret + " expected: " + p4);
 					answer = 0;
+				}
 				break;
 
 			case GETCOUNT:
 				p1 = sc.nextInt();
 				p2 = sc.nextInt();
 				ret = usersolution.getCount(p1);
-				if (ret != p2)
+				if (ret != p2) {
+					System.out.println("command: " + i + " uid: " + p1 + " getCount ret: " + ret + " expected: " + p2);
 					answer = 0;
+				}
 				break;
 
 			default:
@@ -132,13 +152,16 @@ class Solution {
 	
 	public static void main(String[] args) throws Exception {
 	
-		//System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("sample_input2.txt"));
 		sc = new Scanner(System.in);
+		long startTime = System.currentTimeMillis();
 
 		int TC = sc.nextInt();
 		for (int testcase = 1; testcase <= TC; ++testcase) {
             System.out.println("#" + testcase + " " + run());
 		}
+		long stopTime = System.currentTimeMillis();
+		System.out.println((stopTime - startTime));
 
 		sc.close();
 	}
