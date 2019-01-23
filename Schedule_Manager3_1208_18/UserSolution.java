@@ -2,12 +2,26 @@ import java.util.Arrays;
 
 class UserSolution {	
 
-	class Hash {
+	class HashNode {
+		String ename;
+		ENode data;
+		HashNode next;
+		public HashNode() {
+			
+		}
+		public HashNode (String en, ENode dt, HashNode n) {
+			ename = en;
+			data = dt;
+			next = n;
+		}
+	}
+
+	class Hash2 {
 		String ename;
 		ENode data;
 	}
 
-	class Hash2 {
+	class Hash1 {
 		String ename;
 		int master_uid;
 		int no_uid;
@@ -17,8 +31,8 @@ class UserSolution {
 
 	class Node{
 		String ename;
-		int uid;
 		int gid;
+		int uid;
 		Node prev, next;
 		Node adr;
 		public Node() {
@@ -51,14 +65,16 @@ class UserSolution {
 	
 	class Hashtable{
 		int capacity;
-		Hash tb[];
+		HashNode tb[];
 		
 		public Hashtable(int cap) {
 			capacity = cap;
-			tb = new Hash[capacity];
+			tb = new HashNode[capacity];
+			/*
 			for (int i = 0; i < capacity; i++) {
-				tb[i] = new Hash();
+				tb[i] = new HashNode();
 			}
+			*/
 		}
 		
 		int hash(String str) {
@@ -71,7 +87,7 @@ class UserSolution {
 			return hash % capacity;
 		}
 		
-		boolean put(String key, ENode data) {
+		boolean put2(String key, ENode data) {
 			int h = hash(key);
 			while(tb[h].ename != null ) {
 				if (tb[h].ename.equals(key)) {
@@ -86,7 +102,7 @@ class UserSolution {
 			return true;
 		}
 		
-		ENode get(String key) {
+		ENode get2(String key) {
 			int h = hash(key);
 			int cnt = capacity;
 			while (tb[h].ename != null && (--cnt) != 0 ) {
@@ -98,7 +114,7 @@ class UserSolution {
 			return null;
 		}
 
-		boolean remove(String key) {
+		boolean remove2(String key) {
 			int h = hash(key);
 			int cnt = capacity;
 			while (tb[h].ename != null && (--cnt) != 0) {
@@ -111,24 +127,78 @@ class UserSolution {
 			}
 			return false;
 		}
+		boolean put(String key, ENode data) {
+			int h = hash(key);
+			if (tb[h] == null) {
+				tb[h]  = new HashNode(key, data, null);
+			}
+			else {
+				HashNode cur = tb[h];
+				while (cur.next != null && !cur.ename.equals(key))
+					cur = cur.next;
+				if (cur.ename.equals(key)) {
+					cur.data = data;
+					return false;
+				}
+				else
+					cur.next = new HashNode(key, data, null);
+			}
+			return true;
+		}
+		
+		ENode get(String key) {
+			int h = hash(key);
+			if (tb[h] == null)
+				return null;
+			else {
+				HashNode cur = tb[h];
+				while (cur != null  && !cur.ename.equals(key))
+					cur = cur.next;
+				if (cur == null)
+					return null;
+				else
+					return cur.data;
+			}
+		}
+
+		boolean remove(String key) {
+			int h = hash(key);
+			if (tb[h] != null) {
+				HashNode prev = null;
+				HashNode cur = tb[h];
+				while (cur != null && !cur.ename.equals(key)) {
+					prev = cur;
+					cur = cur.next;
+				}
+				if (cur.ename.equals(key)) {
+					if (prev == null)
+						tb[h] = cur.next;
+					else
+						prev.next = cur.next;
+					return true;
+				}
+			}
+			return false;
+		}
 		
 		
 	}
 
+	final static boolean LOG =  false;
 	final static int MAX_GROUP =  100;
 	final static int MAX_USER =  1000;
-	Hashtable[] tb;
+	Hashtable[] htable;
 	Node[] uid_arr;
 	int[] count;
-	
 
 	void init()
 	{
+		if(LOG) System.out.println("The beginning");
 		// 1. Hashtable for group
-		tb = new  Hashtable[MAX_GROUP];
+		htable = new  Hashtable[MAX_GROUP];
 		int capacity = 200;
 		for (int i = 0; i < MAX_GROUP; i++ ) {
-			tb[i] = new Hashtable(capacity);
+			htable[i] = new Hashtable(capacity*2);
 		}
 		
 		// 2. uid array of list
@@ -157,83 +227,79 @@ class UserSolution {
 	void addEvent(int uid, char ename[], int groupid)
 	{
 		// table
-		Hashtable g_table = tb[groupid];
-		//System.out.println(" ename converted " + getStr(ename));
-		System.out.println("***uid " + uid + " ename " + getStr(ename) + " gid " + groupid);
+		Hashtable g_table = htable[groupid];
+		//if(LOG) System.out.println(" ename converted " + getStr(ename));
+		if(LOG) System.out.println("***uid " + uid + " ename " + getStr(ename) + " gid " + groupid);
 		
 		String en = getStr(ename);
 
 		// uid list array ***
 		Node head = uid_arr[uid];
-		head.next = new Node(en, groupid, uid, head, head.next);
-		if (head.next.next != null) head.next.next.prev = head.next;
+		push(head, en, groupid, uid);
 
 		ENode enode;
 		Node unode;
 		// non-master
 		if (g_table.get(en) != null) {
-			System.out.println("non-master ");
+			if(LOG) System.out.println("non-master ");
 			enode = g_table.get(en);
 			if (enode.master_uid != uid) {
 				enode.no_uid++;
+				// push
 				unode = new Node(en, groupid, uid, enode.uid_head, enode.uid_head.next);
 				enode.uid_head.next = unode;
 				if (unode.next != null) unode.next.prev = unode;
 				// *** ref
 				unode.adr = head.next;
-				System.out.println("non-master added " + head.next.uid);
+				if(LOG) System.out.println("non-master added " + head.next.uid);
 				g_table.put(en, enode);
 			}
 		}
 		// master
 		else {
-			System.out.println("master ");
+			if(LOG) System.out.println("master ");
 			enode = new ENode(en, groupid, uid, 1, new Node()); 
+			// push
 			unode = new Node(en, groupid, uid, enode.uid_head, enode.uid_head.next);
 			enode.uid_head.next = unode;
-			enode.no_uid++;
+			//enode.no_uid++;
 			// *** ref
 			unode.adr = head.next;
-			System.out.println(" master added " + head.next.uid);
+			if(LOG) System.out.println(" master added " + head.next.uid);
 			g_table.put(en, enode);
 		}
 
-		System.out.println(" g_table " +  en + " " + groupid + " " );
+		if(LOG) System.out.println(" g_table " +  en + " " + groupid + " " );
 		
 		// count array
 		count[uid]++;
 	}
 
-	void del_node(Node node) {
-		node.prev.next = node.next;
-		if (node.next != null) node.next.prev = node.prev;
-	}
-
 	int deleteEvent(int uid, char ename[])
 	{
 		String en = getStr(ename);
-		System.out.println("##### DeleteEvent " + uid + " " + en );
+		if(LOG) System.out.println("##### DeleteEvent " + uid + " " + en );
 		// uid list array ***
 		Node uhead = uid_arr[uid];
 		int del_cnt = 0;
 		// table
 		while (uhead.next != null) {
 			uhead = uhead.next;
-			System.out.println("uhead name: " + uhead.ename + " gid: " + uhead.gid);
+			if(LOG) System.out.println("uhead name: " + uhead.ename + " gid: " + uhead.gid);
 			if (uhead.ename.equals(en)) {
 				int gid = uhead.gid;
-				Hashtable g_table = tb[gid];
+				Hashtable g_table = htable[gid];
 				// g_table update
 				if (g_table.get(en) != null) {
 					// non-master
 					ENode enode = g_table.get(en);
-					System.out.println(" master uid: " + enode.master_uid);
+					if(LOG) System.out.println(" master uid: " + enode.master_uid);
 					if (enode.master_uid != uid) {
-						System.out.println(" non-master uid: " );
+						if(LOG) System.out.println(" non-master uid: " );
 						Node head_tmp = enode.uid_head;
 						while (head_tmp.next != null) {
 							head_tmp = head_tmp.next;
-							System.out.println(" head_tmp: " + head_tmp.uid );
+							if(LOG) System.out.println(" head_tmp: " + head_tmp.uid );
 							if (head_tmp.uid == uid) {
 								del_node(head_tmp);
 								del_node(head_tmp.adr);
@@ -246,7 +312,7 @@ class UserSolution {
 					}
 					else {
 						// master
-						System.out.println(" master uid: " );
+						if(LOG) System.out.println(" master uid: " );
 						Node head_tmp = enode.uid_head;
 						while (head_tmp.next != null) {
 							head_tmp = head_tmp.next;
@@ -263,7 +329,7 @@ class UserSolution {
 				
 			}
 		}
-		System.out.println("Ans ##%% deleteEvent " + uid + " " + en + " cnt: " + del_cnt);
+		if(LOG) System.out.println("Ans ##%% deleteEvent " + uid + " " + en + " cnt: " + del_cnt);
 		return del_cnt;
 	}
 
@@ -271,7 +337,7 @@ class UserSolution {
 	{
 		String en = getStr(ename);
 		String cn = getStr(cname);
-		System.out.println("##### ChangeEvent " + uid + " " + en + " to " + cn);
+		if(LOG) System.out.println("##### ChangeEvent " + uid + " " + en + " to " + cn);
 		Node uhead = uid_arr[uid];
 		int chn_cnt = 0;
 		// table
@@ -279,7 +345,7 @@ class UserSolution {
 			uhead = uhead.next;
 			if (uhead.ename.equals(en)) {
 				int gid = uhead.gid;
-				Hashtable g_table = tb[gid];
+				Hashtable g_table = htable[gid];
 				// g_table update
 				if (g_table.get(en) != null) {
 					// non-maaster
@@ -293,6 +359,8 @@ class UserSolution {
 								del_node(head_tmp.adr);
 								count[uid]--;
 								chn_cnt++;
+								// TODO: why????
+								del_node(uhead);
 								addEvent(uid, cname, gid);
 								g_table.put(en, enode);
 							}
@@ -303,6 +371,8 @@ class UserSolution {
 						Node head_tmp = enode.uid_head;
 						// add master uid first
 						addEvent(uid, cname, gid);
+						// TODO: why????
+						del_node(uhead);
 						while (head_tmp.next != null) {
 							head_tmp = head_tmp.next;
 							// ** other uids 
@@ -316,19 +386,27 @@ class UserSolution {
 						g_table.remove(en);
 					}
 					// remove from uid list
-					del_node(uhead);
 				}
 				
 			}
 		}
 
-		System.out.println("Ans ##%% changeEvent " + uid + " " + en + " " + cn + " cnt: " + chn_cnt);
+		if(LOG) System.out.println("Ans ##%% changeEvent " + uid + " " + en + " " + cn + " cnt: " + chn_cnt);
 		return chn_cnt; 
 	}
 
 	int getCount(int uid)
 	{
-		System.out.println("Ans ##%% getCount " + uid + " # " + count[uid]);
+		if(LOG) System.out.println("Ans ##%% getCount " + uid + " # " + count[uid]);
 		return count[uid];
+	}
+
+	void push(Node head, String ename, int gid, int uid) {
+		head.next = new Node(ename, gid, uid, head, head.next);
+		if(head.next.next != null) head.next.next.prev = head.next;
+	}
+	void del_node(Node node) {
+		node.prev.next = node.next;
+		if (node.next != null) node.next.prev = node.prev;
 	}
 }
