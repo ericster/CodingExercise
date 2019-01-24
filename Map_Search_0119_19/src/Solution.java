@@ -109,7 +109,7 @@ class Solution {
 					ans = sc.nextInt();
 
 					if (ret[i] != ans) {
-						System.out.println("Search2 incorrect");
+						System.out.println("Search2 incorrect at: " + i );
 						isCorrect = false;
 					}
 				}
@@ -129,8 +129,9 @@ class Solution {
 		int test, T;
 		int answerScore;
 
-		System.setIn(new java.io.FileInputStream("sample_input2.txt"));
+		System.setIn(new java.io.FileInputStream("sample_input.txt"));
 		sc = new Scanner(System.in);
+		long startTime = System.currentTimeMillis();
 		
 		T = sc.nextInt();
 		answerScore = sc.nextInt();
@@ -150,5 +151,7 @@ class Solution {
 				System.out.println("#" + test + " 0");
 			}
 		}
+		long stopTime = System.currentTimeMillis();
+		System.out.println((stopTime - startTime));
 	}
 }
