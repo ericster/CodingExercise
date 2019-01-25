@@ -33,6 +33,7 @@ class UserSolution {
 		return res;
 	}
 
+	// MAX_ID is from the induction that total func call is 50,000
 	final static int MAX_ID =  50000 ;
 	final static int MAX_TYPE =  10;
 
@@ -99,6 +100,7 @@ class UserSolution {
 
 				while (typeh.next != null) {
 					typeh = typeh.next;
+					//TODO: do only if x, y is within Radius
 					if (withinRadius(mY, mX, mRadius, typeh.mY, typeh.mX)) {
 						cnt++;
 					}
@@ -142,6 +144,7 @@ class UserSolution {
 		while (typeh.next != null) {
 			typeh = typeh.next;
 			id_arr[idx] = typeh.mId;
+			//TODO: selection sort. keep only min 5 elements
 			dist_arr[idx++] = distance(mY, mX, typeh.mY, typeh.mX);
 		}
 		
