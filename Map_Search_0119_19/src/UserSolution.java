@@ -123,10 +123,63 @@ class UserSolution {
 		return cnt;
 	}
 
-	void search2_(int mType, int mY, int mX, int mIdList[]) {
-
-	}
 	void search2(int mType, int mY, int mX, int mIdList[]) {
+		//System.out.println(" search2  type: " + mType );
+		Node typeh = types[mType];
+		int len = 0;
+
+		while (typeh.next != null) {
+			typeh = typeh.next;
+			len++;
+		}
+
+		int[] id_arr = new int[5];
+		int[] dist_arr = new int[5];
+		for (int i = 0; i < 5; i++) {
+			mIdList[i] = Integer.MAX_VALUE;
+			dist_arr[i] = Integer.MAX_VALUE;
+		}
+		int dist;
+		typeh = types[mType];
+		int idx = 0;
+		int cnt = 0;
+		//System.out.println(" search2  type: distance" );
+		while (typeh.next != null) {
+			typeh = typeh.next;
+			id_arr[idx] = typeh.mId;
+			//TODO-Done!: insertion sort way. keep only min 5 elements
+			//improve 190 -> 120
+			dist = distance(mY, mX, typeh.mY, typeh.mX);
+
+			int i;
+			for (i = 4; i >= 0 ; i--) {
+				if (dist < dist_arr[i] ) {
+					if (i != 0) {
+						mIdList[i] = mIdList[i-1];
+						dist_arr[i] = dist_arr[i-1];
+					}
+				}
+				else if (dist == dist_arr[i] && typeh.mId < mIdList[i] ) {
+					if (i != 0) {
+						mIdList[i] = mIdList[i-1];
+						dist_arr[i] = dist_arr[i-1];
+					}
+				}
+				else break;
+			}
+			if (i != 4) {
+				mIdList[i+1] = typeh.mId;
+				dist_arr[i+1] = dist;
+			}
+		}
+		if (len < 5) {
+			for (int j=len; j < 5; j++) {
+				mIdList[j] = 0;
+			}
+		}
+	}
+
+	void search2_(int mType, int mY, int mX, int mIdList[]) {
 		//System.out.println(" search2  type: " + mType );
 		Node typeh = types[mType];
 		int len = 0;
@@ -144,7 +197,6 @@ class UserSolution {
 		while (typeh.next != null) {
 			typeh = typeh.next;
 			id_arr[idx] = typeh.mId;
-			//TODO: selection sort. keep only min 5 elements
 			dist_arr[idx++] = distance(mY, mX, typeh.mY, typeh.mX);
 		}
 		
@@ -163,6 +215,7 @@ class UserSolution {
 		}
 
 	}
+	
     void merge(int[] arr, int[] id_arr, int l, int m, int r) 
     { 
         // Find sizes of two subarrays to be merged 

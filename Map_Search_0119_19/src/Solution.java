@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Solution {
@@ -110,6 +111,8 @@ class Solution {
 
 					if (ret[i] != ans) {
 						System.out.println("Search2 incorrect at: " + i );
+						System.out.println("Search2 ret : " + Arrays.toString(ret) );
+						System.out.println("Search2 ans : " + ans);
 						isCorrect = false;
 					}
 				}
