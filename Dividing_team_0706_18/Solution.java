@@ -100,6 +100,10 @@ public class Solution {
 				if (tot[0] == correctTot[0] || tot[1] == correctTot[1]) {
 					++accepted;
 				}
+				else {
+				System.out.println("tot0 : " + tot[0] + " tot1 : " + tot[1] + " "
+						+ "corTot0 : " + correctTot[0] + " corTot1 : " + correctTot[1]);
+				}
 
 				conChk = false;
 			}
@@ -112,6 +116,9 @@ public class Solution {
 
 				if (retId == correctId) {
 					++accepted;
+				}
+				else {
+					System.out.println("retID : " + retId + " correctId : " + correctId);
 				}
 
 				addFunc(test_case);
@@ -131,7 +138,7 @@ public class Solution {
 		int T;
 		int correct, totalScore = 0;
 		
-		//System.setIn(new java.io.FileInputStream("sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("sample_input.txt"));
 		sc = new Scanner(System.in);
 		T = sc.nextInt();
 		

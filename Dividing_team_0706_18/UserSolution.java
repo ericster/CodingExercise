@@ -1,5 +1,5 @@
 public class UserSolution {
-	int S = 1 << 16;
+	int S = 1 << 17;
 	int MIN_ID = S-2, MAX_ID = S-1;
 	//int N, M;
 	int[] arr;  
@@ -20,26 +20,31 @@ public class UserSolution {
 	}
 
 	void update(int d, int node) {
+		if (DEBUG) System.out.println(" d: " + d + " updated node : " + node);
 		if (node < 1) return;
 
 
 		if (arr[tree[d][node*2].minid] != arr[tree[d][node*2 + 1].minid])  {
+			if (DEBUG) System.out.println(" node*2 minid " + tree[d][node*2].minid);
+			if (DEBUG) System.out.println(" node*2+1 minid " + tree[d][node*2+1].minid);
 			tree[d][node].minid = (arr[tree[d][node*2].minid] < arr[tree[d][node*2 + 1].minid]) ?
-					arr[tree[d][node*2].minid] : arr[tree[d][node*2 + 1].minid]  ;
+					tree[d][node*2].minid : tree[d][node*2 + 1].minid  ;
 		}
 		else {
 			tree[d][node].minid = tree[d][node*2].minid < tree[d][node*2 + 1].minid ?
 					tree[d][node*2].minid : tree[d][node*2 + 1].minid ;
 			
 		}
+		if (DEBUG) System.out.println(" tree minid " + tree[d][node].minid);
 		if (arr[tree[d][node*2].maxid] != arr[tree[d][node*2 + 1].maxid])  {
 			tree[d][node].maxid = (arr[tree[d][node*2].maxid] > arr[tree[d][node*2 + 1].maxid]) ?
-					arr[tree[d][node*2].maxid] : arr[tree[d][node*2 + 1].maxid]  ;
+					tree[d][node*2].maxid : tree[d][node*2 + 1].maxid  ;
 		}
 		else {
-			tree[d][node].maxid = tree[d][node*2].maxid< tree[d][node*2 + 1].maxid?
+			tree[d][node].maxid = tree[d][node*2].maxid > tree[d][node*2 + 1].maxid?
 					tree[d][node*2].maxid: tree[d][node*2 + 1].maxid;
 		}
+		if (DEBUG) System.out.println(" tree maxid " + tree[d][node].maxid);
 
 		update(d, node/2);
 	}
@@ -49,6 +54,9 @@ public class UserSolution {
 		sumfr = new int[2];
 		cnt = new int[2];
 		tree = new Tree[2][S*2];
+		for (int i = 0; i < S; i++) {
+			arr[i] = 0;
+		}
 		arr[MIN_ID] = S; 
 		arr[MAX_ID] = -1;
 		for (int i = 0; i < S*2; i++) {
@@ -62,18 +70,29 @@ public class UserSolution {
 
 	}
 
+	boolean DEBUG = false;
 	void addParticipant(Solution.Participant mParticipant) {
 		int id = mParticipant.id;
 		int td = mParticipant.tendency;
 		arr[id] = td;
 		Tree tmp = new Tree(id);
 		int d;
+		if (DEBUG) {
+			System.out.println("tree[0][1].minid " + tree[0][1].minid );
+			System.out.println("tree[0][1].maxid " + tree[0][1].maxid );
+			System.out.println("tree[1][1].minid " + tree[1][1].minid );
+			System.out.println("tree[1][1].maxid " + tree[1][1].maxid );
+		}
 		if (arr[tmp.maxid] != arr[tree[0][1].maxid])  {
 			d = (arr[tmp.maxid] > arr[tree[0][1].maxid]) ? 1 : 0;
 		}
 		else {
 			d = (tmp.maxid > tree[0][1].maxid) ? 1 : 0;
 			
+		}
+		if (DEBUG) {
+			System.out.println("id: " + id + " td: " + td + " d: " + d);
+			System.out.println("tmp maxid: " + tmp.maxid + " tmp minid: " + tmp.minid );
 		}
 		sumfr[d] += td;
 		cnt[d]++;
@@ -84,6 +103,13 @@ public class UserSolution {
 	}
 	
 	int removeParticipants(int K) {
+		if (DEBUG) System.out.println("=== remove mode: " + K);
+		if (DEBUG) {
+			System.out.println("tree[0][1].minid " + tree[0][1].minid );
+			System.out.println("tree[0][1].maxid " + tree[0][1].maxid );
+			System.out.println("tree[1][1].minid " + tree[1][1].minid );
+			System.out.println("tree[1][1].maxid " + tree[1][1].maxid );
+		}
 		int id, res = 0, d ;
 		if (K == 0) {
 			id = tree[0][1].minid;
@@ -118,15 +144,26 @@ public class UserSolution {
 
 	void balance() {
 		int id, from, to;
+		if (DEBUG) System.out.println(" cn0 : " + cnt[0] + " cnt1 : " + cnt[1]);
 		if (cnt[0] > cnt[1] + 1) {
 			from = 0;
 			id = tree[0][1].maxid;
+			if (DEBUG) {
+				System.out.println("from 0 to 1, id : " + id);
+			}
 		}
 		else if (cnt[0] + 1 < cnt[1]) {
 			from = 1;
 			id = tree[1][1].minid;
+			if (DEBUG) {
+				System.out.println("from 1 to 0, id : " + id);
+			}
+
 		}
-		else return;
+		else {
+			if (DEBUG) System.out.println("balanced already");
+			return;
+		}
 		
 		to = 1 - from;
 		
@@ -137,7 +174,7 @@ public class UserSolution {
 		sumfr[from] -= arr[id];
 		sumfr[to] += arr[id];
 		cnt[from]--;
-		cnt[to]--;
+		cnt[to]++;
 		
 	}
 	
