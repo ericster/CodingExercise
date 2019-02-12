@@ -43,7 +43,9 @@ char* my_strcat(char* a, const char* b)
 
 int main(void)
 {
-	// freopen("sample_input.txt", "r", stdin);
+	//freopen("sample_input.txt", "r", stdin);
+	// 1
+	// 16/19+11/17 1.48916408668730650154
 	cin >> T;
 	int total = 0;
 	for (int t = 1; t <= T; ++t)
@@ -51,6 +53,9 @@ int main(void)
 		cin >> str >> cmp;
 		run(rst, str);
 		int dummy2[33];
+		cout << "rst: " << rst;
+		cout << "cmp: " << cmp;
+		cout << endl;
 		int score = (strcmp(rst, cmp) == 0) ? 100 : 0;
 		cout << "#" << t << " " << score << endl;
 		total += score;

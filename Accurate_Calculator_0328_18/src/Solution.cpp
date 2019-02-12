@@ -25,7 +25,6 @@ void sub(char* r, const char* a, const char* b);
 void mul(char* r, const char* a, const char* b);
 void div(char* r, const char* a, const char* b);
 
-
 #define MAX 1000
 
 
@@ -224,7 +223,91 @@ int infixToPostfix(char* exp)
 
  *
  */
+
+struct data {
+	char up[300], dn[300];
+	int op;
+	data (char *x, char *y, int o){
+		strcpy(up, x);
+		strcpy(dn, y);
+		op = o;
+
+	}
+};
+
+void cal(data &res, data tmp){
+	mul(res.up, res.up, tmp.dn);
+	mul(tmp.up, tmp.up, res.dn);
+	mul(res.dn, res.dn, tmp.dn);
+	if (res.op == tmp.op){
+		add(res.up, res.up, tmp.up);
+	}
+	else {
+		if (numcmp(res.up, tmp.up)){
+			sub(res.up, res.up, tmp.up);
+		}
+		else{
+			sub(res.up, tmp.up, res.up);
+			res.op = tmp.op;
+		}
+	}
+}
+
+void output (char* rst, char* a, char* b){
+	char c[350] = { 0 };
+	div(c, a, b);
+	my_strcat(rst, c);
+
+	for (int i = 0; i < 30; i++){
+		mul(c, c, b);
+		sub(a, a, c);
+		mul(a, a, "10");
+		div(c, a, b);
+		my_strcat(rst, c);
+	}
+	my_strcat(rst, "\n");
+
+}
 void run(char* rst, const char* str)
+{
+	int len = my_strlen(str);
+	int flag = 0;
+	int i;
+	int k = 0;
+	char num[300] = {0};
+	data res("0", "1", 0);
+	data tmp("1", "1", 0);
+
+	for (i = 0; i < len; i++){
+		if (str[i] >= '0' && str[i] <= '9'){
+			num[k++] = str[i];
+			continue;
+		}
+		num[k] = 0;
+		k = 0;
+		if (flag == 0) mul(tmp.up, tmp.up, num);
+		else mul(tmp.dn, tmp.dn, num);
+		if (str[i] == '/') flag = 1;
+		else flag = 0;
+		if (str[i] == '+' || str[i] == '-' || str[i] == '='){
+			cal(res, tmp);
+			strcpy(tmp.up, "1");
+			strcpy(tmp.dn, "1");
+			if (str[i] == '+') tmp.op = 0;
+			else tmp.op = 1;
+		}
+
+	}
+	if (res.op) {
+		my_strcat(rst, "-");
+	}
+	output(rst, res. up, res.dn);
+
+}
+
+
+
+void run_1(char* rst, const char* str)
 {
     cout << "input string " << str << endl;
     int N = my_strlen(str);
