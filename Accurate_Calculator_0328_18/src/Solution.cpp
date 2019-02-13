@@ -253,21 +253,48 @@ void cal(data &res, data tmp){
 	}
 }
 
+int DEBUG_OUT = 0;
 void output (char* rst, char* a, char* b){
 	char c[350] = { 0 };
 	div(c, a, b);
 	my_strcat(rst, c);
+	my_strcat(rst, ".");
 
-	for (int i = 0; i < 30; i++){
+	for (int i = 0; i < 20; i++){
 		mul(c, c, b);
 		sub(a, a, c);
 		mul(a, a, "10");
 		div(c, a, b);
 		my_strcat(rst, c);
 	}
-	my_strcat(rst, "\n");
+	char tmp[300] = {0};
+	int len = my_strlen(rst);
+	if (DEBUG_OUT) cout << "output len : " << len << endl;
+	for (int i = len-1; i >= 0; i--){
+		if (DEBUG_OUT) cout << "i: " << i << " " << rst[i] << " ";
+		if (rst[i] == '0'){
+			len--;
+			continue;
+		}
+		else if (rst[i] == '.'){
+			len--;
+			break;
+		}
+		else{
+			break;
+		}
+	}
+	if (DEBUG_OUT) {
+		cout << endl;
+		cout << "output after len : " << len << endl;
+	}
+	for (int i = len-1; i >= 0; i--){
+		tmp[i] = rst[i];
+	}
+	my_strcpy(rst, tmp);
 
 }
+int DEBUG = 0;
 void run(char* rst, const char* str)
 {
 	int len = my_strlen(str);
@@ -275,13 +302,22 @@ void run(char* rst, const char* str)
 	int i;
 	int k = 0;
 	char num[300] = {0};
+	strcpy(rst, "");
 	data res("0", "1", 0);
 	data tmp("1", "1", 0);
 
-	for (i = 0; i < len; i++){
+	for (i = 0; i <= len; i++){
+		if (DEBUG) cout << "ith ch: " << str[i] << endl;
 		if (str[i] >= '0' && str[i] <= '9'){
 			num[k++] = str[i];
 			continue;
+		}
+		if (DEBUG){
+			cout << "flag: " << flag << endl;
+			cout << "res.up " << res.up << endl;
+			cout << "res.dn " << res.dn << endl;
+			cout << "tmp.up " << tmp.up << endl;
+			cout << "tmp.dn " << tmp.dn << endl;
 		}
 		num[k] = 0;
 		k = 0;
@@ -289,7 +325,7 @@ void run(char* rst, const char* str)
 		else mul(tmp.dn, tmp.dn, num);
 		if (str[i] == '/') flag = 1;
 		else flag = 0;
-		if (str[i] == '+' || str[i] == '-' || str[i] == '='){
+		if (str[i] == '+' || str[i] == '-' || i == len){
 			cal(res, tmp);
 			strcpy(tmp.up, "1");
 			strcpy(tmp.dn, "1");
@@ -298,10 +334,15 @@ void run(char* rst, const char* str)
 		}
 
 	}
+	if (DEBUG){
+		cout << "res.up " << res.up << endl;
+		cout << "res.dn " << res.dn << endl;
+	}
+
 	if (res.op) {
 		my_strcat(rst, "-");
 	}
-	output(rst, res. up, res.dn);
+	output(rst, res.up, res.dn);
 
 }
 
